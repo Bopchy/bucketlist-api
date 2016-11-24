@@ -3,8 +3,6 @@ from faker import Factory
 from flask import Flask
 from flask_testing import TestCase
 
-from tests.random_username import random_username_generator
-
 
 class TestBucketlistUserEndpoints(TestCase):
 
@@ -17,7 +15,7 @@ class TestBucketlistUserEndpoints(TestCase):
 
     def setUp(self):
         fake_data = Factory.create()
-        self.username = random_username_generator()
+        self.username = fake_data.user_name()
         self.password = fake_data.password()
         self.email = fake_data.email()
 
