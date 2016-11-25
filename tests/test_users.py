@@ -1,28 +1,11 @@
 import json
-from faker import Factory
-from flask import Flask
-from flask_testing import TestCase
+
+from test_setup import TestSetUpTearDown
 
 
-class TestBucketlistUserEndpoints(TestCase):
+class TestBucketlistUserEndpoints(TestSetUpTearDown):
 
     """Tests for class Bucketlist's User related endpoints"""
-
-    def create_app(self):
-        test_app = Flask(__name__)
-        test_app.config['TESTING'] = True
-        return test_app
-
-    def setUp(self):
-        fake_data = Factory.create()
-        self.username = fake_data.user_name()
-        self.password = fake_data.password()
-        self.email = fake_data.email()
-
-        # Creating a user
-        new_user_url = '/auth/login'
-        new_user_data = {'username': 'guty45', 'email': 'guty45@gmail.com', 'password': '1234abc'}
-        self.client.post(new_user_url, data=json.dumps(new_user_data, sort_keys=True))
 
     def test_register_takes_username_email_and_password(self):
         url = '/auth/register'
@@ -112,6 +95,3 @@ class TestBucketlistUserEndpoints(TestCase):
         data = {'username': 'guty45', 'password': ''}
         response = self.client.post(url, data=json.dumps(data, sort_keys=True))
         self.assertEqual(response.status_code, 400)
-
-    def tearDown(self):
-        pass

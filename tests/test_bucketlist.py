@@ -1,41 +1,21 @@
 import json
-from faker import Factory
-from flask import Flask
-from flask_testing import TestCase
+
+from test_setup import TestSetUpTearDown
 
 
-class TestBucketListEndpoints(TestCase):
+class TestBucketListEndpoints(TestSetUpTearDown):
 
     """Tests class Bucketlist"""
-
-    def create_app(self):
-        testing_app = Flask(__name__)
-        testing_app.config['TESTING'] = True
-        return testing_app
-
-    def setUp(self):
-        fake_data = Factory.create()
-        self.bucketlist_name = fake_data.sentence()
-        self.bucketlist_item_name = fake_data.sentence()
-
-        # Creating a bucketlist
-        new_bucketlist_id = 1
-        new_bucketlist_url = '/bucketlists/'
-        new_bucketlist_data = {'name': 'Life Goals.'}
-        self.client.post(new_bucketlist_url, data=json.dumps(new_bucketlist_data, sort_keys=True))
-
-        # Creating bucketlist item
-        new_bucketlist_item_id = 1
-        new_bucketlist_item_url = '/bucketlists/1/items/'
-        new_bucketlist_item_data = {'name': 'Go bungee jumping.'}
-        self.client.post(new_bucketlist_item_url, data=json.dumps(new_bucketlist_item_data, sort_keys=True))
 
     def test_buckelist_is_created(self):
         url = '/bucketlists/'
         data = {'name': self.bucketlist_name}
+        # Get count before .post
         response = self.client.post(url, data=json.dumps(data, sort_keys=True))
+        # Get count after post
+        # Assertion of +1 in count
         self.assertEqual(response.status_code, 201)
-        self.assertIn("New Bucketlist '" + ['name'] + "' has been created.", response.data)
+        self.assertIn("New Bucketlist '" + data['name'] + "' has been created.", response.data)
 
     def test_create_bucketlist_returns_409_if_bucketlist_name_already_exists(self):
         url = '/bucketlists/'
@@ -99,6 +79,3 @@ class TestBucketListEndpoints(TestCase):
         response2 = self.client.get(url2)
         self.assertEqual(response2.status_code, 404)
         self.assertIn("That bucketlist item doesn't exist.", response2.data)
-
-    def tearDown(self):
-        pass

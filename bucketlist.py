@@ -1,4 +1,8 @@
-from flask import jsonify
+from flask import Flask, request
+
+# from bucketlist_models import
+
+bucketlist = Flask(__name__)
 
 
 class Bucketlist(object):
@@ -37,3 +41,6 @@ class Bucketlist(object):
 
     def delete_bucketlist_item():
         pass
+
+if (__name__) == '__main__':
+    app.run(debug=True)
