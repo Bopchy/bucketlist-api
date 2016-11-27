@@ -1,9 +1,9 @@
 import json
 
-from test_setup import TestSetUpTearDown
+from api.tests.test_setup import BaseTestClass
 
 
-class TestBucketListEndpoints(TestSetUpTearDown):
+class TestBucketListEndpoints(BaseTestClass):
 
     """Tests class Bucketlist"""
 
@@ -68,7 +68,6 @@ class TestBucketListEndpoints(TestSetUpTearDown):
         data = {'name': 'Go dancing on the moon.'}
         response = self.client.put(url, data=json.dumps(data))
         self.assertEqual(response.status_code, 404)
-        self.assertIn("You cannot update a bucketlist item that doesn't exist yet!", response.data)
 
     def test_bucketlist_item_is_deleted(self):
         url = '/bucketlists/1/items/1'

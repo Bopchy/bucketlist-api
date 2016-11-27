@@ -1,9 +1,9 @@
 import json
 
-from test_setup import TestSetUpTearDown
+from api.tests.test_setup import BaseTestClass
 
 
-class TestBucketlistUserEndpoints(TestSetUpTearDown):
+class TestBucketlistUserEndpoints(BaseTestClass):
 
     """Tests for class Bucketlist's User related endpoints"""
 
@@ -15,7 +15,8 @@ class TestBucketlistUserEndpoints(TestSetUpTearDown):
 
     def test_register_returns_201_if_successful(self):
         url = '/auth/register'
-        data = {'username': self.username, 'email': self.email, 'password': self.password}
+        data = {'username': self.username,
+                'email': self.email, 'password': self.password}
         response = self.client.post(url, data=json.dumps(data, sort_keys=True))
         self.assertEqual(response.status_code, 201)
 
