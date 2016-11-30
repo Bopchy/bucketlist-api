@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from api import db
+from bapi import db
 
 
 class Users(db.Model):

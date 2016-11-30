@@ -4,9 +4,9 @@ from flask import Flask
 from faker import Factory
 from flask_testing import TestCase
 
-from api import app, db
-from api.config import config
-from api.bucketlist_models import Bucketlist, BucketListItem, Users
+from bapi import app, db
+from bapi.config import config
+from bapi.bucketlist_models import Bucketlist, BucketListItem, Users
 
 
 class BaseTestClass(TestCase):

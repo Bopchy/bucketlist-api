@@ -2,7 +2,7 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
 
 from bucketlist_models import Bucketlist, BucketListItem, Users
-from api import app, db
+from bapi import app, db
 from config import config
 
 app.config.from_object(config['testing'])
