@@ -5,7 +5,7 @@ from bucketlist_models import Bucketlist, BucketListItem, Users
 from bapi import app, db
 from config import config
 
-app.config.from_object(config['testing'])
+app.config.from_object(config['development'])
 
 
 def make_shell_context():
