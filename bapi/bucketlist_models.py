@@ -1,4 +1,4 @@
-from bapi import db
+from bapi import db, bcrypt
 
 
 DB = db
@@ -19,7 +19,10 @@ class Users(db.Model):
     def __init__(self, username, hashed_password, email):
         self.username = username
         self.email = email
-        self.hashed_password = hashed_password
+        self.hashed_password = bcrypt.generate_password_hash(hashed_password)
+
+    def check_password(self, hashed_password):
+        bcrypt.check_password_hash(hashed_password, self.hashed_password)
 
 
 class Bucketlist(db.Model):
