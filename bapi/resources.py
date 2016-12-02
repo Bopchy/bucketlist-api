@@ -1,8 +1,11 @@
 import itertools
+
+from flask import g
 from flask_restful import Resource, reqparse
 
 from bucketlist_models import DB, Users, Bucketlist, BucketListItem
 from serializers import *
+from verification import token_auth
 
 
 class BapiLogin(Resource):
@@ -58,13 +61,15 @@ class BapiRegister(Resource):
 
 class Bucketlists(Resource):
 
-    """Create a new Bucketlist, List all Bucketlists."""
+    """Create a new Bucketlist, List all Bucketlists.
+    @token_auth.login_required ensures that users are required 
+    to be authenticated and have a token."""
 
-    decorators = [login_required]
-
-    def get():
+    @token_auth.login_required
+    def get(self):
         pass
-
+    
+    @token_auth.login_required
     def post():
         pass
 
@@ -73,14 +78,16 @@ class SingleBucketlist(Resource):
 
     """List update and delete a single Bucketlist."""
 
-    decorators = [login_required]
 
+    @token_auth.login_required
     def get():
         pass
 
+    @token_auth.login_required
     def put():
         pass
 
+    @token_auth.login_required
     def delete():
         pass
 
@@ -88,12 +95,12 @@ class SingleBucketlist(Resource):
 class BucketlistItems(Resource):
 
     """Update and Delete BucketlistItems."""
-
-    decorators = [login_required]
-        
+    
+    @token_auth.login_required    
     def put():
         pass
 
+    @token_auth.login_required
     def delete():
         pass
 
@@ -102,8 +109,7 @@ class CreateBucketlistItem(Resource):
 
     """Create a new Item in Bucketlist."""
     
-    decorators = [login_required]
-
+    @token_auth.login_required
     def post():
         pass
 

@@ -33,20 +33,6 @@ class Users(db.Model):
         s = Serializer(Config.SECRET_KEY, expires_in=expiration)
         return s.dumps({'username': self.username}).decode('utf-8')
 
-    @staticmethod
-    def verify_auth_token(token):
-        # Decodes the token to get the user that was assigned token 
-        s = Serializer(Config.SECRET_KEY)
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            return None # Because token is expired, though valid
-        except BadSignature:
-            return None # Because token is bad
-
-        tokened_user = Users.query.get(data['username']) 
-        return tokened_user
-
 
 class Bucketlist(db.Model):
 
