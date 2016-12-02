@@ -1,3 +1,5 @@
+import string
+import random
 
 
 class Config(object):
@@ -5,7 +7,8 @@ class Config(object):
     """Configurations class."""
     DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SECRET_KEY = ''.join(random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for _ in range(32))
 
 class TestingConfig(Config):
 
