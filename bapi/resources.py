@@ -61,7 +61,8 @@ class BapiRegister(Resource):
 
 class Bucketlists(Resource):
 
-    """Create a new Bucketlist, List all Bucketlists.
+    """Creates a new Bucketlist and lists all Bucketlists.
+    
     @token_auth.login_required ensures that users are required 
     to be authenticated and have a token."""
 
@@ -70,8 +71,22 @@ class Bucketlists(Resource):
         pass
     
     @token_auth.login_required
-    def post():
-        pass
+    def post(self):
+        self.bucketlist = reqparse.RequestParser()
+        self.bucketlist.add_argument('name', type=str, required=True, location='json')
+        self.args = self.bucketlist.parse_args()
+
+        if self.args.name == None:
+            return {'message': 'You need to give your new bucketlist a name.'}, 400
+        new_bucketlist = Bucketlist(name=self.args.name, created_by=g.user.id)
+
+        try:
+            DB.session.add(new_bucketlist)
+            DB.session.commit()
+            return {'message': 'New Bucketlist has been created successfully.'}, 201
+        except Exception as e:
+            DB.session.rollback()
+            return {'message': e }, 500
 
 
 class SingleBucketlist(Resource):
@@ -109,7 +124,43 @@ class CreateBucketlistItem(Resource):
 
     """Create a new Item in Bucketlist."""
     
+    done_responses = ['yes', 'no']
+
     @token_auth.login_required
-    def post():
-        pass
+    def post(self, id):
+        self.create_item = reqparse.RequestParser()
+        self.create_item.add_argument('name', type=str, required=True, location='json')
+        self.create_item.add_argument('done', type=str, default='No', location='json')
+        self.args = self.create_item.parse_args()
+
+        bucketlist = Bucketlist.query.get(id=id)
+        if bucketlist:
+            if bucketlist.created_by != g.user.id:
+                return {'message': 'You do not have permission to use Bucketlist with id' + id}
+        
+            for k, v in self.args.items():
+                if k == self.args.name and v == None:
+                    return {'message': 'You need to provide a name to create a bucketlist item.'}, 400
+                elif k == self.args.done and v != None:
+                    if v.lower() not in done_responses:
+                        return {'message': "Use either 'Yes' or 'No' for done."}, 400
+
+                bucketlist_item = BucketListItem(name=self.args.name, done=self.args.done)
+
+            try:
+                DB.session.add(bucketlist_item)
+                DB.session.commit()
+                return {'message': 'Bucketlist item created successfully.'}, 201
+            except Exception as e:
+                DB.session.rollback()
+                return {'message': e}
+
+        return {'message': "A Bucketlist with that id doesn't exist."}, 404
+
+
+
+
+
+
+
 

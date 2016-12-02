@@ -28,10 +28,10 @@ class Users(db.Model):
         return bcrypt.check_password_hash(self.hashed_password, hashed_password)
 
     def generate_auth_token(self, expiration=600):
-        # Creates an encrypted dictionary containing the user's username as token,
+        # Creates an encoded string from dictionary containing the user's username as token,
         # with an expiration of 10 minutes.  
         s = Serializer(Config.SECRET_KEY, expires_in=expiration)
-        return s.dumps({'username': self.username}).decode('utf-8')
+        return s.dumps({'username': self.username, 'id': self.id}).decode('utf-8')
 
 
 class Bucketlist(db.Model):
@@ -40,7 +40,7 @@ class Bucketlist(db.Model):
 
     __tablename__ = 'bucketlist'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(250), unique=True, index=True)
+    name = db.Column(db.String(250), index=True)
     item = db.relationship('BucketListItem', backref='bucketlistitem',
                            cascade='all, delete-orphan', lazy='dynamic')
     date_created = db.Column(db.DateTime, server_default=db.func.now())
@@ -48,8 +48,9 @@ class Bucketlist(db.Model):
                               onupdate=db.func.now())
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    def __init__(self, name):
+    def __init__(self, name, created_by):
         self.name = name
+        self.created_by = created_by
 
 
 class BucketListItem(db.Model):
@@ -63,7 +64,7 @@ class BucketListItem(db.Model):
     date_created = db.Column(db.DateTime, server_default=db.func.now())
     date_modified = db.Column(db.DateTime, server_default=db.func.now(),
                               onupdate=db.func.now())
-    done = db.Column(db.Boolean, default=False)
+    done = db.Column(db.String(3), default='No')
 
     def __init__(self, name):
         self.name = name
