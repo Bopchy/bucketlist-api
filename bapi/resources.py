@@ -3,12 +3,11 @@ from datetime import datetime
 from json import dumps 
 
 from flask import g
-from flask_restful import Resource, reqparse, marshal
+from flask_restful import Resource, reqparse, marshal, request
 
 from bucketlist_models import DB, Users, Bucketlist, BucketListItem
 from serializers import bucketlist_serial, bucketlist_item_serial, bapi_users 
 from verification import token_auth
-from utils import json_serializer 
 
 
 class BapiLogin(Resource):
@@ -72,9 +71,14 @@ class Bucketlists(Resource):
     @token_auth.login_required
     def get(self):
         # Lists all existing bucketlists
+        q = request.args.get('q')
+
         all_bucketlists = Bucketlist.query.filter_by(created_by=g.user.id).all()
         if all_bucketlists:
-            return marshal(all_bucketlists, bucketlist_serial) 
+            if q:
+                search_results = Bucketlist.query.filter(Bucketlist.created_by==g.user.id, Bucketlist.name.ilike('%' + q + '%')).all()
+                return marshal(search_results, bucketlist_serial)
+            return marshal(all_bucketlists, bucketlist_serial)
         return {'message': 'There are currently no existing bucketlists.'}, 204
             
     
