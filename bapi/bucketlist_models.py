@@ -27,7 +27,7 @@ class Users(db.Model):
         print('user %s db %s' % (hashed_password, self.hashed_password))
         return bcrypt.check_password_hash(self.hashed_password, hashed_password)
 
-    def generate_auth_token(self, expiration=600):
+    def generate_auth_token(self, expiration=6000):
         # Creates an encoded string from dictionary containing the user's username as token,
         # with an expiration of 10 minutes.  
         s = Serializer(Config.SECRET_KEY, expires_in=expiration)
@@ -66,5 +66,6 @@ class BucketListItem(db.Model):
                               onupdate=db.func.now())
     done = db.Column(db.String(3), default='No')
 
-    def __init__(self, name):
+    def __init__(self, name, done):
         self.name = name
+        self.done = done
