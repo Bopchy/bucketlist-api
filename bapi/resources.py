@@ -6,7 +6,7 @@ from flask import g
 from flask_restful import Resource, reqparse, marshal
 
 from bucketlist_models import DB, Users, Bucketlist, BucketListItem
-from serializers import bucketlist, bucketlist_item, bapi_users 
+from serializers import bucketlist_serial, bucketlist_item_serial, bapi_users 
 from verification import token_auth
 from utils import json_serializer 
 
@@ -74,7 +74,7 @@ class Bucketlists(Resource):
         # Lists all existing bucketlists
         all_bucketlists = Bucketlist.query.filter_by(created_by=g.user.id).all()
         if all_bucketlists:
-            return marshal(all_bucketlists, bucketlist) 
+            return marshal(all_bucketlists, bucketlist_serial) 
         return {'message': 'There are currently no existing bucketlists.'}, 204
             
     
@@ -107,7 +107,7 @@ class SingleBucketlist(Resource):
         # Lists a single bucketlist 
         requested_bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
         if requested_bucketlist:
-            return marshal(requested_bucketlist, bucketlist)
+            return marshal(requested_bucketlist, bucketlist_serial)
         return {'message': 'You do not have a bucketlist with that id.'}, 204
 
     @token_auth.login_required
@@ -129,7 +129,7 @@ class SingleBucketlist(Resource):
                     DB.session.rollback()
                     return {'message': e}
             return {'message': 'A bucketlist with that id does not exist'}, 404
-        return {'message': 'You need to provide a new name to edit this Bucketlist.'}, 204
+        return {'message': 'You need to provide a new name to edit this Bucketlist.'}, 400
 
     @token_auth.login_required
     def delete(self, id):
@@ -138,6 +138,7 @@ class SingleBucketlist(Resource):
             try:
                 Bucketlist.query.filter_by(created_by=g.user.id, id=id).delete()
                 DB.session.commit()
+                return {'message': 'Bucketlist ' + id + ' has been deleted successfully.'}
             except Exception as e:
                 DB.session.rollback()
                 return {'message': e}
@@ -167,7 +168,6 @@ class CreateBucketlistItem(Resource):
                     done = True
                 new_bucketlist_item = BucketListItem(name=args.name, done=done)
                 new_bucketlist_item.bucketlist_id = bucketlist.id
-                import ipdb; ipdb.set_trace()
                 try:
                     DB.session.add(new_bucketlist_item)
                     DB.session.commit()
@@ -186,10 +186,43 @@ class BucketlistItems(Resource):
     """Update and Delete BucketlistItems."""
     
     @token_auth.login_required    
-    def put():
-        pass
+    def put(self, id, item_id):
+        # Updates a single bucketlist item 
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str, required=True, location='json')
+        parser.add_argument('done', type=str, required=True, location='json')
+        args = parser.parse_args()
+
+        bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
+        if bucketlist:
+            bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=id, id=item_id).first()
+            if bucketlist_item:
+                if args.done == 'No':
+                    args.done = False
+                else:
+                    args.done = True
+                bucketlist_item.name = args.name 
+                bucketlist_item.done = args.done
+                try:
+                    DB.session.commit()
+                    return {'message': 'Changes have been made succesfully.'}, 200
+                except Exception as e:
+                    DB.session.rollback()
+                    return {'message': e}
+        return {'message': 'You do not have permission to edit this bucketlist item.'}, 401
 
     @token_auth.login_required
-    def delete():
-        pass
+    def delete(self, id, item_id):
+        # Deletes a single bucketlist item
+        bucketlist = Bucketlist.query.filter_by(id=id, created_by=g.user.id).first()
+        if bucketlist:
+            try:
+                bucketlist_item = BucketListItem.query.filter_by(id=item_id).delete()
+                DB.session.commit()
+                return {'message': 'Item ' + item_id + ' has been deleted successfully.' }
+            except Exception as e:
+                DB.session.rollback()
+                return {'message': e}
+        return {'message': 'Either bucketlist with that id does not exist, or you have no permission to edit it.'}, 400
+        
 
