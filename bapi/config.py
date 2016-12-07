@@ -1,6 +1,3 @@
-import string
-import random
-
 
 class Config(object):
 
@@ -9,7 +6,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SECRET_KEY = 'JdN!$Jzxor^ecdjIoEMuRw8ozD!MtB'
-    
+
 
 class TestingConfig(Config):
 

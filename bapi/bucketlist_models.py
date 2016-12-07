@@ -1,9 +1,10 @@
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from bapi import db, bcrypt
 from config import Config
 
 
 DB = db
+
 
 class Users(db.Model):
 
@@ -28,8 +29,8 @@ class Users(db.Model):
         return bcrypt.check_password_hash(self.hashed_password, hashed_password)
 
     def generate_auth_token(self, expiration=6000):
-        # Creates an encoded string from dictionary containing the user's username as token,
-        # with an expiration of 10 minutes.  
+        # Creates an encoded string from dictionary containing the user's
+        # username as token, with an expiration of 10 minutes.
         s = Serializer(Config.SECRET_KEY, expires_in=expiration)
         return s.dumps({'username': self.username, 'id': self.id}).decode('utf-8')
 

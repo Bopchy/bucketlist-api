@@ -16,6 +16,7 @@ def make_shell_context():
 # Allows us to make migrations using the db command
 # Allows use to access shell as above.
 
+
 manager = Manager(app)
 migrate = Migrate(app, db)
 

@@ -1,7 +1,8 @@
-from resources import * 
+from resources import BapiLogin, BapiRegister, Bucketlists, SingleBucketlist, CreateBucketlistItem, BucketlistItems
+
 
 def routes(api):
-	# API resource routing setup 
+    # API resource routing setup
 	api.add_resource(BapiLogin, '/auth/login', endpoint='bapilogin')
 	api.add_resource(BapiRegister, '/auth/register', endpoint='register')
 	api.add_resource(Bucketlists, '/bucketlists/', endpoint='bucketlists')

@@ -1,4 +1,3 @@
-from flask_httpauth import HTTPBasicAuth
 from flask_restful import Api
 
 from bapi import app

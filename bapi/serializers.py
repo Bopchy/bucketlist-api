@@ -12,14 +12,13 @@ bucketlist_item_serial = {
 bucketlist_serial = {
     'id': fields.Integer,
     'name': fields.String,
-    'items': fields.Nested(bucketlist_item_serial),
-    'date_created': fields.DateTime, 
+    'items': fields.List(fields.Nested(bucketlist_item_serial)),
+    'date_created': fields.DateTime,
     'date_modified': fields.DateTime,
     'created_by': fields.String
 }
 
-bapi_users = {
+users_serial = {
     'username': fields.String,
     'email': fields.String,
-    'password': fields.String
 }
