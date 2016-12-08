@@ -1,6 +1,5 @@
 import json
 
-from flask import Flask
 from faker import Factory
 from flask_testing import TestCase
 
@@ -14,11 +13,6 @@ class BaseTestClass(TestCase):
     """Sets up testing app, and fake data."""
 
     def create_app(self):
-        # test_app = Flask(__name__)
-        # test_app.config.from_object(config['testing'])
-
-        # db.init_app(test_app)
-        # return test_app
         app.config.from_object(config['testing'])
         return app
 

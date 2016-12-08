@@ -12,7 +12,7 @@ bucketlist_item_serial = {
 bucketlist_serial = {
     'id': fields.Integer,
     'name': fields.String,
-    'items': fields.List(fields.Nested(bucketlist_item_serial)),
+    'item': fields.List(fields.Nested(bucketlist_item_serial)),
     'date_created': fields.DateTime,
     'date_modified': fields.DateTime,
     'created_by': fields.String

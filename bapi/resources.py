@@ -1,64 +1,68 @@
-import itertools
-from datetime import datetime
-from json import dumps
-
 from flask import g
 from flask_restful import Resource, reqparse, marshal, request
 
 from bucketlist_models import DB, Users, Bucketlist, BucketListItem
-from serializers import bucketlist_serial, bucketlist_item_serial, users_serial
+from serializers import bucketlist_serial
 from verification import token_auth
 
 
-class BapiLogin(Resource):
+class Login(Resource):
 
     """Logs in users and returns token."""
 
     def post(self):
         self.user = reqparse.RequestParser()
-        self.user.add_argument('username', type=str, required=True, location='json')
-        self.user.add_argument('password', type=str, required=True, location='json')
+        self.user.add_argument('username', type=str, required=True,
+                               location='json')
+        self.user.add_argument('password', type=str, required=True,
+                               location='json')
         self.args = self.user.parse_args()
 
-        if self.args.username and self.args.password:
-            user = Users.query.filter_by(username=self.args.username).first()
+        user = Users.query.filter_by(username=self.args.username).first()
+
+        try:
             if user:
                 if user.check_password(self.args.password):
                     token = user.generate_auth_token()
                     return {'token': token}, 200
                 return {'message': 'Invalid password'}, 401
-            return {'message': args.username + ' does not exist in the database.'}, 401
-        return {'message': 'Username or Password not provided.'}, 400
+            return {'message': 'That username does not exist.'}, 401
+        except Exception:
+            return {'message': 'There was an error logging you in.'}, 400
 
 
-class BapiRegister(Resource):
+class Register(Resource):
 
     """Registers new users."""
 
     def post(self):
         self.bapi_users = reqparse.RequestParser()
-        self.bapi_users.add_argument('username', type=str, required=True, location='json')
-        self.bapi_users.add_argument('email', type=str, required=True, location='json')
-        self.bapi_users.add_argument('password', type=str, required=True, location='json')
+        self.bapi_users.add_argument('username', type=str, required=True,
+                                     location='json')
+        self.bapi_users.add_argument('email', type=str, required=True,
+                                     location='json')
+        self.bapi_users.add_argument('password', type=str, required=True,
+                                     location='json')
         self.args = self.bapi_users.parse_args()
 
-        for k, v in self.args.items():
-            if v is None:
-                return {'message': 'Username, Email and Password are required.'}, 400
-            user = Users.query.filter_by(username=self.args.username).first()
-            if user:
-                return {'message': self.args.username + ' already exists. Please choose another username.'}, 409
-            user_email = Users.query.filter_by(email=self.args.email).first()
-            if user_email:
-                return {'message': self.args.email + ' is already in use. Please provide a different email.'}, 409
-            user = Users(username=self.args.username, email=self.args.email, hashed_password=self.args.password)
+        if '@' not in self.args.email or '.com' not in self.args.email:
+            return {'message': 'Invalid email provided'}, 422
+        user = Users.query.filter_by(username=self.args.username).first()
+        if user:
+            return {'message': 'A user with that name already exists.'}, 409
+        user_email = Users.query.filter_by(email=self.args.email).first()
+        if user_email:
+            return {'message': 'That email is already in use.'}, 409
+        user = Users(username=self.args.username, email=self.args.email,
+                     hashed_password=self.args.password)
+
         try:
             DB.session.add(user)
             DB.session.commit()
-            return {'message': self.args.username + ' has been successfully added.'}, 201
-        except Exception as e:
+            return {'message': 'New user has been added successfully.'}, 201
+        except Exception:
             DB.session.rollback()
-            return {'message': e}, 500
+            return {'message': 'An error occured during saving.'}, 500
 
 
 class Bucketlists(Resource):
@@ -82,12 +86,15 @@ class Bucketlists(Resource):
             page = int(request.args.get('page', '1'))
         except Exception:
             return {'message': 'Invalid page value provided.'}
-        import ipdb
-        ipdb.set_trace()
-        all_bucketlists = Bucketlist.query.filter(Bucketlist.created_by == g.user.id).paginate(page, limit, True)
+
+        all_bucketlists = Bucketlist.query.filter(
+            Bucketlist.created_by == g.user).paginate(page, limit, True)
+
         if all_bucketlists:
+
             if q:
-                search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user.id, Bucketlist.name.ilike('%' + q + '%')).paginate(int(page), int(limit), True).items
+                search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user, Bucketlist.name.ilike(
+                    '%' + q + '%')).paginate(int(page), int(limit), True).items
                 if not search_results:
                     return {'message': 'Found no bucketlists matching your query.'}, 200
                 return marshal(search_results, bucketlist_serial)
@@ -97,39 +104,49 @@ class Bucketlists(Resource):
             prev_page = all_bucketlists.has_prev
 
             if next_page:
-                next_page = str(request.url.root) + '/bucketlists?' + 'limit=' + str(limit) + '&page=' + str(page + 1)
+                next_page = str(request.url.root) + '/bucketlists?' + \
+                    'limit=' + str(limit) + '&page=' + str(page + 1)
             next_page = None
 
             if prev_page:
-                prev_page = str(request.url.root) + '/bucketlists?' + 'limit=' + str(limit) + '&page=' + str(page - 1)
+                prev_page = str(request.url.root) + '/bucketlists?' + \
+                    'limit=' + str(limit) + '&page=' + str(page - 1)
             prev_page = None
 
             all_bucketlists = all_bucketlists.items
 
-            result = {'bucketlists': marshal(all_bucketlists, bucketlist_serial), 'total_pages': all_pages, 'next_page': next_page, 'prev_page': prev_page}
+            return {'bucketlists': marshal(all_bucketlists, bucketlist_serial),
+                    'total_pages': all_pages,
+                    'next_page': next_page,
+                    'prev_page': prev_page}
 
-            return result
-        return {'message': 'There are currently no existing bucketlists.'}, 204
+        return {'message': 'There are currently no existing bucketlists.'}, 200
 
     @token_auth.login_required
     def post(self):
+
+        existing = [item.name for item in Bucketlist.query.all()]
+
         # Creates a new bucketlist
         self.bucketlist = reqparse.RequestParser()
-        self.bucketlist.add_argument('name', type=str, required=True, location='json')
-        self.bucketlist.add_argument('items', type=items_parser, action='append')
+        self.bucketlist.add_argument('name', type=str, required=True,
+                                     location='json')
         self.args = self.bucketlist.parse_args()
 
-        if self.args.name is None:
-            return {'message': 'You need to give your new bucketlist a name.'}, 400
-        new_bucketlist = Bucketlist(name=self.args.name, created_by=g.user.id)
+        if self.args.name is " ":
+            return {'message': 'Provide a name for the new bucketlist.'}, 400
+        elif self.args.name in existing:
+            return {'message': 'You already have a Bucketlist with that name.'}, 409
+        import ipdb; ipdb.set_trace()
+        new_bucketlist = Bucketlist(name=self.args.name, created_by=g.user)
 
         try:
             DB.session.add(new_bucketlist)
             DB.session.commit()
-            return {'message': 'New Bucketlist has been created successfully.'}, 201
-        except Exception as e:
+            return {'message': 'New Bucketlist created successfully.'}, 201
+        except Exception:
             DB.session.rollback()
-            return {'message': e }, 500
+            return {'message': 'An error occured during saving.'}, 500
 
 
 class SingleBucketlist(Resource):
@@ -139,80 +156,102 @@ class SingleBucketlist(Resource):
     @token_auth.login_required
     def get(self, id):
         # Lists a single bucketlist
-        requested_bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
+        requested_bucketlist = Bucketlist.query.filter_by(created_by=g.user, id=id).first()
+
         if requested_bucketlist:
             return marshal(requested_bucketlist, bucketlist_serial)
-        return {'message': 'You do not have a bucketlist with that id.'}, 204
+        return {'message': 'You do not have a bucketlist with that id.'}, 404
 
     @token_auth.login_required
     def put(self, id):
-        # Updates a single bucketlist (entirely, not partly)
+
+        existing = [item.name for item in Bucketlist.query.all()]
+
+        # Updates a single bucketlist
         self.new = reqparse.RequestParser()
         self.new.add_argument('name', type=str, required=True, location='json')
         self.args = self.new.parse_args()
 
         if self.args:
-            bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
-            old_name = bucketlist.name
+            bucketlist = Bucketlist.query.filter_by(created_by=g.user, id=id).first()
+
             if bucketlist:
+
+                if self.args.name in existing:
+                    return {'message': 'You already have a Bucketlist with that name.'}, 409
+
                 try:
                     bucketlist.name = self.args.name
                     DB.session.commit()
-                    return {'message': "'" + old_name + "'" + ' has been changed to ' + "'" + self.args.name + "'"}
-                except Exception as e:
+                    return {'message': 'Bucketlist edited successfully.'}, 200
+                except Exception:
                     DB.session.rollback()
-                    return {'message': e}
-            return {'message': 'A bucketlist with that id does not exist'}, 404
-        return {'message': 'You need to provide a new name to edit this Bucketlist.'}, 400
+                    return {'message': 'An error occured during saving.'}, 500
+
+            return {'message': 'A bucketlist with that id was not found.'}, 404
+
+        return {'message': 'Provide a new name to edit this Bucketlist.'}, 400
 
     @token_auth.login_required
     def delete(self, id):
         # Deletes a single bucketlist
         if id:
+
             try:
-                Bucketlist.query.filter_by(created_by=g.user.id, id=id).delete()
+                Bucketlist.query.filter_by(created_by=g.user, id=id).delete()
                 DB.session.commit()
-                return {'message': 'Bucketlist ' + id + ' has been deleted successfully.'}
-            except Exception as e:
+                return {'message': 'Bucketlist deleted successfully.'}, 200
+            except Exception:
                 DB.session.rollback()
-                return {'message': e}
+                return {'message': 'An error occured during saving.'}, 500
+
         return 'You must provide a bucketlist id to delete a Bucketlist.', 204
 
 
 class CreateBucketlistItem(Resource):
 
-    """Create a new Item in Bucketlist."""
-
-    done_responses = ['yes', 'no']
+    """Creates a new Item in Bucketlist."""
 
     @token_auth.login_required
     def post(self, id):
+
+        existing_items = BucketListItem.query.filter_by(bucketlist_id=id)
+
         create_item = reqparse.RequestParser()
-        create_item.add_argument('name', type=str, required=True, location='json')
-        create_item.add_argument('done', type=str, required=False, default='No', location='json')
-        create_item.add_argument('bucketlist_id', type=int, required=True, location='json')
+        create_item.add_argument('name', type=str, required=True,
+                                 location='json')
+        create_item.add_argument('done', type=str, required=False, default='No',
+                                 location='json')
         args = create_item.parse_args()
 
         if id:
-            bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
+
+            bucketlist = Bucketlist.query.filter_by(created_by=g.user, id=id).first()
             if bucketlist:
+
                 if args.done == 'No':
                     done = False
-                else:
+                elif args.done == 'Yes':
                     done = True
+                else:
+                    return {'message': "Use either 'Yes' or 'No' for done"}, 400
+
+                if args.name in existing_items.name:
+                    return {'message': 'Item with that name already exists in this bucketlist.'}, 409
                 new_bucketlist_item = BucketListItem(name=args.name, done=done)
                 new_bucketlist_item.bucketlist_id = bucketlist.id
+
                 try:
                     DB.session.add(new_bucketlist_item)
                     DB.session.commit()
-                    return {'message': " New item '" + args.name + "' has been created."}
-                except Exception as e:
+                    return {'message': " New item has been created."}, 201
+                except Exception:
                     DB.session.rollback()
-                    return {'message': e}
+                    return {'message': 'An error occured during saving.'}, 500
 
-            return {'message': 'A bucketlist with that id does not exist.'}, 400
+            return {'message': 'A bucketlist with that id does not exist.'}, 404
 
-        return {'message': 'You need to provide a bucketlist id for this operation.'}, 400
+        return {'message': 'Provide a bucketlist id for this operation.'}, 400
 
 
 class BucketlistItems(Resource):
@@ -221,40 +260,57 @@ class BucketlistItems(Resource):
 
     @token_auth.login_required
     def put(self, id, item_id):
+
+        existing_items = BucketListItem.query.filter_by(bucketlist_id=id).all()
+
         # Updates a single bucketlist item
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str, required=True, location='json')
-        parser.add_argument('done', type=str, required=True, location='json')
+        parser.add_argument('done', type=str, required=False, location='json')
         args = parser.parse_args()
 
-        bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
+        bucketlist = Bucketlist.query.filter_by(created_by=g.user, id=id).first()
         if bucketlist:
+
             bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=id, id=item_id).first()
+
             if bucketlist_item:
+
                 if args.done == 'No':
                     args.done = False
-                else:
+                elif args.done == 'Yes':
                     args.done = True
+                else:
+                    return {'message': "Use either 'Yes' or 'No' for done"}, 400
+
+                if args.name in existing_items.name:
+                    return {'message': 'Item with that name already exists in this bucketlist.'}, 409
                 bucketlist_item.name = args.name
                 bucketlist_item.done = args.done
+
                 try:
                     DB.session.commit()
                     return {'message': 'Changes have been made succesfully.'}, 200
-                except Exception as e:
+                except Exception:
                     DB.session.rollback()
-                    return {'message': e}
-        return {'message': 'You do not have permission to edit this bucketlist item.'}, 401
+                    return {'message': 'An error occured during saving.'}, 500
+
+            return {'message': 'An item with that id was not found.'}, 404
+
+        return {'message': 'You are not authorized to edit this bucketlist item.'}, 401
 
     @token_auth.login_required
     def delete(self, id, item_id):
         # Deletes a single bucketlist item
-        bucketlist = Bucketlist.query.filter_by(id=id, created_by=g.user.id).first()
+        bucketlist = Bucketlist.query.filter_by(id=id, created_by=g.user).first()
         if bucketlist:
+
             try:
-                bucketlist_item = BucketListItem.query.filter_by(id=item_id).delete()
+                BucketListItem.query.filter_by(id=item_id).delete()
                 DB.session.commit()
-                return {'message': 'Item ' + item_id + ' has been deleted successfully.' }
-            except Exception as e:
+                return {'message': 'Item has been deleted successfully.'}, 200
+            except Exception:
                 DB.session.rollback()
-                return {'message': e}
-        return {'message': 'Either bucketlist with that id does not exist, or you have no permission to edit it.'}, 400
+                return {'message': 'An error occured during saving.'}, 200
+
+        return {'message': "You are not authorized to delete this item"}, 401

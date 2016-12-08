@@ -25,14 +25,16 @@ class Users(db.Model):
         self.hashed_password = bcrypt.generate_password_hash(hashed_password)
 
     def check_password(self, hashed_password):
-        print('user %s db %s' % (hashed_password, self.hashed_password))
         return bcrypt.check_password_hash(self.hashed_password, hashed_password)
 
     def generate_auth_token(self, expiration=6000):
         # Creates an encoded string from dictionary containing the user's
-        # username as token, with an expiration of 10 minutes.
+        # id as token, with an expiration of 10 minutes.
+
         s = Serializer(Config.SECRET_KEY, expires_in=expiration)
         return s.dumps({'username': self.username, 'id': self.id}).decode('utf-8')
+        # decode('utf-8') converts the binary result of s.dumps from binary
+        # to a string -- because binary is not JSON serializable.
 
 
 class Bucketlist(db.Model):
