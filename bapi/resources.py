@@ -88,12 +88,12 @@ class Bucketlists(Resource):
             return {'message': 'Invalid page value provided.'}
 
         all_bucketlists = Bucketlist.query.filter(
-            Bucketlist.created_by == g.user).paginate(page, limit, True)
+            Bucketlist.created_by == g.user.id).paginate(page, limit, True)
 
         if all_bucketlists:
 
             if q:
-                search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user, Bucketlist.name.ilike(
+                search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user.id.id, Bucketlist.name.ilike(
                     '%' + q + '%')).paginate(int(page), int(limit), True).items
                 if not search_results:
                     return {'message': 'Found no bucketlists matching your query.'}, 200
@@ -137,8 +137,8 @@ class Bucketlists(Resource):
             return {'message': 'Provide a name for the new bucketlist.'}, 400
         elif self.args.name in existing:
             return {'message': 'You already have a Bucketlist with that name.'}, 409
-        import ipdb; ipdb.set_trace()
-        new_bucketlist = Bucketlist(name=self.args.name, created_by=g.user)
+
+        new_bucketlist = Bucketlist(name=self.args.name, created_by=g.user.id)
 
         try:
             DB.session.add(new_bucketlist)
@@ -156,7 +156,7 @@ class SingleBucketlist(Resource):
     @token_auth.login_required
     def get(self, id):
         # Lists a single bucketlist
-        requested_bucketlist = Bucketlist.query.filter_by(created_by=g.user, id=id).first()
+        requested_bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
 
         if requested_bucketlist:
             return marshal(requested_bucketlist, bucketlist_serial)
@@ -173,7 +173,7 @@ class SingleBucketlist(Resource):
         self.args = self.new.parse_args()
 
         if self.args:
-            bucketlist = Bucketlist.query.filter_by(created_by=g.user, id=id).first()
+            bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
 
             if bucketlist:
 
@@ -198,7 +198,7 @@ class SingleBucketlist(Resource):
         if id:
 
             try:
-                Bucketlist.query.filter_by(created_by=g.user, id=id).delete()
+                Bucketlist.query.filter_by(created_by=g.user.id, id=id).delete()
                 DB.session.commit()
                 return {'message': 'Bucketlist deleted successfully.'}, 200
             except Exception:
@@ -226,7 +226,7 @@ class CreateBucketlistItem(Resource):
 
         if id:
 
-            bucketlist = Bucketlist.query.filter_by(created_by=g.user, id=id).first()
+            bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
             if bucketlist:
 
                 if args.done == 'No':
@@ -269,7 +269,7 @@ class BucketlistItems(Resource):
         parser.add_argument('done', type=str, required=False, location='json')
         args = parser.parse_args()
 
-        bucketlist = Bucketlist.query.filter_by(created_by=g.user, id=id).first()
+        bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
         if bucketlist:
 
             bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=id, id=item_id).first()
@@ -302,7 +302,7 @@ class BucketlistItems(Resource):
     @token_auth.login_required
     def delete(self, id, item_id):
         # Deletes a single bucketlist item
-        bucketlist = Bucketlist.query.filter_by(id=id, created_by=g.user).first()
+        bucketlist = Bucketlist.query.filter_by(id=id, created_by=g.user.id).first()
         if bucketlist:
 
             try:

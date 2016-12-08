@@ -33,7 +33,7 @@ class BaseTestClass(TestCase):
         self.new_bucketlist_data = {'name': 'Life Goals.'}
         self.client.post(self.new_bucketlist_url, data=json.dumps(self.new_bucketlist_data, sort_keys=True))
 
-        new_bucketlist = Bucketlist('Life Goals.')
+        new_bucketlist = Bucketlist('Life Goals.', 1)
         db.session.add(new_bucketlist)
 
         # Creating bucketlist item
@@ -42,7 +42,7 @@ class BaseTestClass(TestCase):
         self.new_bucketlist_item_data = {'name': 'Go bungee jumping.'}
         self.client.post(self.new_bucketlist_item_url, data=json.dumps(self.new_bucketlist_item_data, sort_keys=True))
 
-        new_bucketlist_item = BucketListItem('Go bungee jumping.')
+        new_bucketlist_item = BucketListItem('Go bungee jumping.', 'No')
         db.session.add(new_bucketlist_item)
 
         # Creating a user

@@ -16,7 +16,7 @@ def verify_token(token):
     # Ensures that token is authentic before decoding it and assiging
     # user with the token's request context (g).
 
-    g.user = None
+    # g.user = None
     try:
         data = jwt.loads(token)
     except SignatureExpired:
@@ -24,7 +24,9 @@ def verify_token(token):
     except BadSignature:
         return 'Invalid signature.'
 
-    if data:
-        tokened_user = Users.query.filter_by(id=data['id'])
+    tokened_user = Users.query.get(data['id'])
+
+    if tokened_user:
         g.user = tokened_user
+        return g.user
     return False
