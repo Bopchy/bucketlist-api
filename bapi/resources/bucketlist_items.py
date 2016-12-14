@@ -87,13 +87,14 @@ class BucketlistItems(Resource):
                     else:
                         return {'message': "Use either 'Yes' or 'No' for done"}, 400
 
-                    if args.name:
-                        if args.name in existing_items:
-                            return {'message': 'Item with that name already exists in this bucketlist.'}, 409
-                        elif args.name is "" or args.name is " ":
-                            return {'message': 'You cannot have a nameless bucketlist item'}, 400
-                        bucketlist_item.name = args.name
+                    if args.name is None:
+                        args.name = bucketlist_item.name
+                    elif args.name in existing_items:
+                        return {'message': 'Item with that name already exists in this bucketlist.'}, 409
+                    elif args.name is "" or args.name is " ":
+                        return {'message': 'You cannot have a nameless bucketlist item'}, 400
 
+                    bucketlist_item.name = args.name
                     bucketlist_item.done = args.done
 
                     try:
