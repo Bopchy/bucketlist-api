@@ -1,7 +1,7 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from bapi import db, bcrypt
-from config import Config
+from bapi.config import Config
 
 
 DB = db

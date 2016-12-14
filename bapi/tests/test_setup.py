@@ -2,10 +2,12 @@ import json
 
 from faker import Factory
 from flask_testing import TestCase
+from flask_restful import Api
 
 from bapi import app, db
 from bapi.config import config
 from bapi.bucketlist_models import Bucketlist, BucketListItem, Users
+from bapi.routes import routes
 
 
 class BaseTestClass(TestCase):
@@ -14,6 +16,8 @@ class BaseTestClass(TestCase):
 
     def create_app(self):
         app.config.from_object(config['testing'])
+        api = Api(app)
+        routes(api)
         return app
 
     def setUp(self):
@@ -28,27 +32,25 @@ class BaseTestClass(TestCase):
         db.create_all()
 
         # Creating a bucketlist
-        self.new_bucketlist_id = 1
-        self.new_bucketlist_url = '/bucketlists/'
-        self.new_bucketlist_data = {'name': 'Life Goals.'}
-        self.client.post(self.new_bucketlist_url, data=json.dumps(self.new_bucketlist_data, sort_keys=True))
+        # self.new_bucketlist_url = '/bucketlists/'
+        # self.new_bucketlist_data = {'name': 'Life Goals.'}
+        # self.client.post(self.new_bucketlist_url, data=json.dumps(self.new_bucketlist_data)
+        #
+        # new_bucketlist = Bucketlist('Life Goals.',)
+        # db.session.add(new_bucketlist)
 
-        new_bucketlist = Bucketlist('Life Goals.', 1)
-        db.session.add(new_bucketlist)
-
-        # Creating bucketlist item
-        self.new_bucketlist_item_id = 1
-        self.new_bucketlist_item_url = '/bucketlists/1/items/'
-        self.new_bucketlist_item_data = {'name': 'Go bungee jumping.'}
-        self.client.post(self.new_bucketlist_item_url, data=json.dumps(self.new_bucketlist_item_data, sort_keys=True))
-
-        new_bucketlist_item = BucketListItem('Go bungee jumping.', 'No')
-        db.session.add(new_bucketlist_item)
+        # # Creating bucketlist item
+        # self.new_bucketlist_item_url = '/bucketlists/1/items/'
+        # self.new_bucketlist_item_data = {'name': 'Go bungee jumping.'}
+        # self.client.post(self.new_bucketlist_item_url, data=json.dumps(self.new_bucketlist_item_data))
+        #
+        # new_bucketlist_item = BucketListItem('Go bungee jumping.', 'No')
+        # db.session.add(new_bucketlist_item)
 
         # Creating a user
         self.new_user_url = '/auth/login'
         self.new_user_data = {'username': 'guty45', 'email': 'guty45@gmail.com', 'password': '1234abc'}
-        self.client.post(self.new_user_url, data=json.dumps(self.new_user_data, sort_keys=True))
+        self.client.post(self.new_user_url, data=json.dumps(self.new_user_data))
 
         new_user = Users('guty45', 'guty45@gamil.com', '1234abc')
         db.session.add(new_user)

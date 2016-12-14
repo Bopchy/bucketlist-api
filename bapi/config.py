@@ -14,6 +14,7 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test_db.sqlite'
     # PRAGMA foreign_keys = ON
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    DEBUG = False
 
 
 class DevelopmentConfig(Config):

@@ -2,8 +2,8 @@ from flask import g
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 from flask_httpauth import HTTPTokenAuth
 
-from bucketlist_models import Users
-from config import Config
+from bapi.bucketlist_models import Users
+from bapi.config import Config
 
 
 token_auth = HTTPTokenAuth(scheme='Token')

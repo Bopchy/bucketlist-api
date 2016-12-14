@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 
-from bucketlist_models import Users
+from bapi.bucketlist_models import Users
 
 
 class Login(Resource):

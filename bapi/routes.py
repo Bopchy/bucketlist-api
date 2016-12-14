@@ -1,7 +1,7 @@
-from resources.login import Login
-from resources.register import Register
-from resources.bucketlist_ops import Bucketlists, SingleBucketlist
-from resources.bucketlist_items import CreateBucketlistItem, BucketlistItems
+from bapi.resources.login import Login
+from bapi.resources.register import Register
+from bapi.resources.bucketlist_ops import Bucketlists, SingleBucketlist
+from bapi.resources.bucketlist_items import CreateBucketlistItem, BucketlistItems
 
 
 def routes(api):

@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 
-from bucketlist_models import Users, DB
+from bapi.bucketlist_models import Users, DB
 
 
 class Register(Resource):

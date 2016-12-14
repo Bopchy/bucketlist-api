@@ -1,9 +1,9 @@
 from flask import g
 from flask_restful import Resource, reqparse, request, marshal
 
-from verification import token_auth
-from bucketlist_models import Bucketlist, BucketListItem, DB
-from serializers import bucketlist_serial
+from bapi.verification import token_auth
+from bapi.bucketlist_models import Bucketlist, BucketListItem, DB
+from bapi.serializers import bucketlist_serial
 
 
 class Bucketlists(Resource):
