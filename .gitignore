@@ -4,3 +4,6 @@ DS_Store
 .coverage
 .coveragerc
 *.sqlite
+tox.ini
+.tox/
+MANIFEST 

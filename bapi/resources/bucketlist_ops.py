@@ -36,7 +36,7 @@ class Bucketlists(Resource):
             if all_bucketlists:
 
                 if q:
-                    search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user.id.id, Bucketlist.name.ilike(
+                    search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user.id, Bucketlist.name.ilike(
                         '%' + q + '%')).paginate(int(page), int(limit), True).items
                     if not search_results:
                         return {'message': 'Found no bucketlists matching your query.'}, 200
@@ -163,10 +163,9 @@ class SingleBucketlist(Resource):
                     BucketListItem.query.filter_by(bucketlist_id=id).delete()
                     DB.session.commit()
                     return {'message': 'Bucketlist deleted successfully.'}, 200
-                except Exception as e:
+                except Exception:
                     DB.session.rollback()
-                    # return {'message': 'An error occured during saving.'}, 500
-                    return {'message': e}
+                    return {'message': 'An error occured during saving.'}, 500
 
             return 'You must provide a bucketlist id to delete a Bucketlist.', 204
 

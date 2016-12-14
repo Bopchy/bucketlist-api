@@ -28,14 +28,16 @@ class CreateBucketlistItem(Resource):
                 bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
                 if bucketlist:
 
-                    if args.done == 'No':
+                    if args.done.lower() == 'no' or args.done is None:
                         done = False
-                    elif args.done == 'Yes':
+                    elif args.done.lower() == 'yes':
                         done = True
                     else:
                         return {'message': "Use either 'Yes' or 'No' for done"}, 400
 
-                    if args.name in existing_items:
+                    if args.name == "" or args.name == " ":
+                        return {'message': 'Please provide a name for the new bucketlist item.'}, 400
+                    elif args.name in existing_items:
                         return {'message': 'Item with that name already exists in this bucketlist.'}, 409
                     new_bucketlist_item = BucketListItem(name=args.name, done=done)
                     new_bucketlist_item.bucketlist_id = bucketlist.id
@@ -80,9 +82,9 @@ class BucketlistItems(Resource):
 
                 if bucketlist_item:
 
-                    if args.done == 'No' or args.done is None:
+                    if args.done.lower() == 'no' or args.done is None:
                         args.done = False
-                    elif args.done == 'Yes':
+                    elif args.done.lower() == 'yes':
                         args.done = True
                     else:
                         return {'message': "Use either 'Yes' or 'No' for done"}, 400
@@ -108,10 +110,8 @@ class BucketlistItems(Resource):
 
             return {'message': 'You are not authorized to edit this bucketlist item.'}, 401
 
-        # except AttributeError:
-        #     return {'message': 'You are not authorized to access this URL.'}, 403
-        except Exception as e:
-            return {'message': e}
+        except AttributeError:
+            return {'message': 'You are not authorized to access this URL.'}, 403
 
     @token_auth.login_required
     def delete(self, id, item_id):
