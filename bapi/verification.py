@@ -16,7 +16,6 @@ def verify_token(token):
     # Ensures that token is authentic before decoding it and assiging
     # user with the token's request context (g).
 
-    # g.user = None
     try:
         data = jwt.loads(token)
     except SignatureExpired:

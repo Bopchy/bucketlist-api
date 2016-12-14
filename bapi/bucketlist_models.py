@@ -1,4 +1,5 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
 from bapi import db, bcrypt
 from config import Config
 
@@ -16,8 +17,7 @@ class Users(db.Model):
                          nullable=False)
     hashed_password = db.Column(db.String(65))
     email = db.Column(db.String(65), nullable=False, unique=True)
-    bucketlists = db.relationship('Bucketlist', backref='bucketlist',
-                                  cascade='all, delete-orphan', lazy='dynamic')
+    bucketlists = db.relationship('Bucketlist', backref='bucketlist')
 
     def __init__(self, username, hashed_password, email):
         self.username = username
@@ -44,12 +44,11 @@ class Bucketlist(db.Model):
     __tablename__ = 'bucketlist'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), index=True)
-    item = db.relationship('BucketListItem', backref='bucketlistitem',
-                           cascade='all, delete-orphan', lazy='dynamic')
+    item = db.relationship('BucketListItem', backref='bucketlistitem')
     date_created = db.Column(db.DateTime, server_default=db.func.now())
     date_modified = db.Column(db.DateTime, server_default=db.func.now(),
                               onupdate=db.func.now())
-    created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
 
     def __init__(self, name, created_by):
         self.name = name
@@ -63,7 +62,7 @@ class BucketListItem(db.Model):
     __tablename__ = 'bucketlistitem'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
-    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id'))
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id', ondelete='CASCADE'))
     date_created = db.Column(db.DateTime, server_default=db.func.now())
     date_modified = db.Column(db.DateTime, server_default=db.func.now(),
                               onupdate=db.func.now())
