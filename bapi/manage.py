@@ -2,9 +2,10 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
 
 from bucketlist_models import Bucketlist, BucketListItem, Users
-from api import create_app, db
+from bapi import app, db
+from config import config
 
-app = create_app('development')
+app.config.from_object(config['testing'])
 
 
 def make_shell_context():
@@ -14,6 +15,7 @@ def make_shell_context():
 
 # Allows us to make migrations using the db command
 # Allows use to access shell as above.
+
 
 manager = Manager(app)
 migrate = Migrate(app, db)

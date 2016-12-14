@@ -1,6 +1,6 @@
 import json
 
-from api.tests.test_setup import BaseTestClass
+from bapi.tests.test_setup import BaseTestClass
 
 
 class TestBucketlistUserEndpoints(BaseTestClass):
