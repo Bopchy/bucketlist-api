@@ -2,8 +2,8 @@ DS_Store
 *.pyc
 .env
 .coverage
-.coveragerc
 *.sqlite
 tox.ini
 .tox/
-MANIFEST 
+MANIFEST
+/migrations/

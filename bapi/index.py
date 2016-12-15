@@ -1,8 +1,8 @@
 from flask_restful import Api
 
 from bapi import app
-from config import config
-from routes import routes
+from bapi.config import config
+from bapi.routes import routes
 
 api = Api(app)
 app.config.from_object(config['development'])

@@ -2,12 +2,17 @@ import json
 
 from faker import Factory
 from flask_testing import TestCase
-from flask_restful import Api
+# from flask_restful import Api
 
 from bapi import app, db
 from bapi.config import config
 from bapi.bucketlist_models import Bucketlist, BucketListItem, Users
-from bapi.routes import routes
+from bapi.index import api
+# from bapi.resources.login import Login
+# from bapi.resources.register import Register
+# from bapi.resources.bucketlist_ops import Bucketlists, SingleBucketlist
+# from bapi.resources.bucketlist_items import CreateBucketlistItem, BucketlistItems
+# from bapi.routes import routes
 
 
 class BaseTestClass(TestCase):
@@ -16,8 +21,8 @@ class BaseTestClass(TestCase):
 
     def create_app(self):
         app.config.from_object(config['testing'])
-        api = Api(app)
-        routes(api)
+        # api = Api(app)
+        # routes(api)
         return app
 
     def setUp(self):
@@ -27,6 +32,16 @@ class BaseTestClass(TestCase):
         self.username = fake_data.user_name()
         self.password = fake_data.password()
         self.email = fake_data.email()
+
+        # api.add_resource(Login, '/auth/login', endpoint='testlogin')
+        # api.add_resource(Register, '/auth/register', endpoint='testregister')
+        # api.add_resource(Bucketlists, '/bucketlists/', endpoint='testbucketlists')
+        # api.add_resource(SingleBucketlist, '/bucketlists/<id>',
+        #                  endpoint='testsinglebucketlist')
+        # api.add_resource(CreateBucketlistItem, '/bucketlists/<id>/items/',
+        #                  endpoint='testcreatebucketlistitem')
+        # api.add_resource(BucketlistItems, '/bucketlists/<id>/items/<item_id>',
+        #                  endpoint='testbucketlistitems')
 
         # Create test database
         db.create_all()
