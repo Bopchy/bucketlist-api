@@ -38,7 +38,6 @@ class Users(db.Model):
         return s.dumps({'username': self.username, 'id': self.id}).decode('utf-8')
 
 
-
 class Bucketlist(db.Model):
 
     """Model for Bucketlist table"""

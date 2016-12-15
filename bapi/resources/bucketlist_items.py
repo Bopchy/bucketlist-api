@@ -108,7 +108,7 @@ class BucketlistItems(Resource):
 
                 return {'message': 'An item with that id was not found.'}, 404
 
-            return {'message': 'You are not authorized to edit this bucketlist item.'}, 401
+            return {'message': 'You do not have a bucketlist with that id.'}, 404
 
         except AttributeError:
             return {'message': 'You are not authorized to access this URL.'}, 403
