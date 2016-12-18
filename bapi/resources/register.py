@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 
-from bapi.bucketlist_models import Users, DB
+from bapi import db
+from bapi.bucketlist_models import Users
 
 
 class Register(Resource):
@@ -29,9 +30,9 @@ class Register(Resource):
                      hashed_password=self.args.password)
 
         try:
-            DB.session.add(user)
-            DB.session.commit()
+            db.session.add(user)
+            db.session.commit()
             return {'message': 'New user has been added successfully.'}, 201
         except Exception:
-            DB.session.rollback()
+            db.session.rollback()
             return {'message': 'An error occured during saving.'}, 500

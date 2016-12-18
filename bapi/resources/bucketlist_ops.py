@@ -1,8 +1,9 @@
 from flask import g
 from flask_restful import Resource, reqparse, request, marshal
 
+from bapi import db
 from bapi.verification import token_auth
-from bapi.bucketlist_models import Bucketlist, BucketListItem, DB
+from bapi.bucketlist_models import Bucketlist, BucketListItem
 from bapi.serializers import bucketlist_serial
 
 
@@ -31,30 +32,33 @@ class Bucketlists(Resource):
                 return {'message': 'Invalid page value provided.'}
 
             all_bucketlists = Bucketlist.query.filter(
-                Bucketlist.created_by == g.user.id).paginate(page, limit, True)
+                Bucketlist.created_by == g.user.id, Bucketlist.name.ilike(
+                    '%' + q + '%')).paginate(page, limit, True)
 
+            # import ipdb; ipdb.set_trace()
             if all_bucketlists:
 
-                if q:
-                    search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user.id, Bucketlist.name.ilike(
-                        '%' + q + '%')).paginate(int(page), int(limit), True).items
-                    if not search_results:
-                        return {'message': 'Found no bucketlists matching your query.'}, 200
-                    return marshal(search_results, bucketlist_serial)
+                # if q:
+                #     search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user.id, Bucketlist.name.ilike(
+                #         '%' + q + '%')).paginate(int(page), int(limit), True).items
+                #     if not search_results:
+                #         return {'message': 'Found no bucketlists matching your query.'}, 200
+                #     return marshal(search_results, bucketlist_serial)
 
                 all_pages = all_bucketlists.pages
                 next_page = all_bucketlists.has_next
                 prev_page = all_bucketlists.has_prev
-
-                if next_page:
-                    next_page = str(request.url.root) + '/bucketlists?' + \
-                        'limit=' + str(limit) + '&page=' + str(page + 1)
-                next_page = None
-
-                if prev_page:
-                    prev_page = str(request.url.root) + '/bucketlists?' + \
-                        'limit=' + str(limit) + '&page=' + str(page - 1)
-                prev_page = None
+                #
+                # if next_page:
+                #     next_page = str(request.url.root) + '/bucketlists?' + \
+                #         'limit=' + str(limit) + '&page=' + str(page + 1)
+                #
+                # next_page = None
+                #
+                # if prev_page:
+                #     prev_page = str(request.url.root) + '/bucketlists?' + \
+                #         'limit=' + str(limit) + '&page=' + str(page - 1)
+                # prev_page = None
 
                 all_bucketlists = all_bucketlists.items
 
@@ -65,8 +69,8 @@ class Bucketlists(Resource):
 
             return {'message': 'There are currently no existing bucketlists.'}, 200
 
-        except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'}, 403
+        except Exception as e:
+            return {'message': e}, 403
 
     @token_auth.login_required
     def post(self):
@@ -88,11 +92,11 @@ class Bucketlists(Resource):
             new_bucketlist = Bucketlist(name=self.args.name, created_by=g.user.id)
 
             try:
-                DB.session.add(new_bucketlist)
-                DB.session.commit()
+                db.session.add(new_bucketlist)
+                db.session.commit()
                 return {'message': 'New Bucketlist created successfully.'}, 201
             except Exception:
-                DB.session.rollback()
+                db.session.rollback()
                 return {'message': 'An error occured during saving.'}, 500
 
         except AttributeError:
@@ -138,10 +142,10 @@ class SingleBucketlist(Resource):
 
                     try:
                         bucketlist.name = self.args.name
-                        DB.session.commit()
+                        db.session.commit()
                         return {'message': 'Bucketlist edited successfully.'}, 200
                     except Exception:
-                        DB.session.rollback()
+                        db.session.rollback()
                         return {'message': 'An error occured during saving.'}, 500
 
                 return {'message': 'A bucketlist with that id was not found.'}, 404
@@ -161,10 +165,10 @@ class SingleBucketlist(Resource):
                 try:
                     Bucketlist.query.filter_by(created_by=g.user.id, id=id).delete()
                     BucketListItem.query.filter_by(bucketlist_id=id).delete()
-                    DB.session.commit()
+                    db.session.commit()
                     return {'message': 'Bucketlist deleted successfully.'}, 200
                 except Exception:
-                    DB.session.rollback()
+                    db.session.rollback()
                     return {'message': 'An error occured during saving.'}, 500
 
             return 'You must provide a bucketlist id to delete a Bucketlist.', 204

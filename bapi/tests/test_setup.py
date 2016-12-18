@@ -2,7 +2,7 @@ import json
 
 from faker import Factory
 from flask_testing import TestCase
-
+from flask import url_for
 from bapi import app, db
 from bapi.config import config
 from bapi.bucketlist_models import Bucketlist, BucketListItem, Users
@@ -27,30 +27,37 @@ class BaseTestClass(TestCase):
 
         db.create_all()
 
-        self.new_user_url = '/auth/register'
-        self.new_user_data = {'username': 'guty45', 'email': 'guty45@gmail.com',
+        self.new_user_data = {'username': 'guty45',
+                              'email': 'guty45@gmail.com',
                               'password': '1234abc'}
-        self.client.post(self.new_user_url, data=json.dumps(self.new_user_data),
+        self.client.post(url_for('register'),
+                         data=json.dumps(self.new_user_data),
                          content_type='application/json')
         self.new_user = Users.query.filter_by(username='guty45').one()
 
-        self.login_user_url = '/auth/login'
         self.login_user_data = {'username': 'guty45', 'password': '1234abc'}
-        response = self.client.post(self.login_user_url,
+        response = self.client.post(url_for('bapilogin'),
                                     data=json.dumps(self.login_user_data),
                                     content_type='application/json')
         token = response.json['token']
         self.authorization = {'Authorization': 'Token {0}'.format(token)}
 
-        self.new_bucketlist_url = '/bucketlists/'
-        self.new_bucketlist_data = {'name': 'Life Goals.', 'created_by': self.new_user.id}
-        self.client.post(self.new_bucketlist_url, data=json.dumps(self.new_bucketlist_data))
+        self.new_bucketlist_data = {'name': 'Life Goals.',
+                                    'created_by': self.new_user.id}
+        self.client.post(url_for('bucketlists'),
+                         data=json.dumps(self.new_bucketlist_data),
+                         headers=self.authorization,
+                         content_type='application/json')
 
-        self.new_bucketlist_item_url = '/bucketlists/1/items/'
+        self.created_bucketlist = Bucketlist.query.filter_by(name=self.new_bucketlist_data['name']).one()
         self.new_bucketlist_item_data = {'name': 'Go bungee jumping.'}
-        self.client.post(self.new_bucketlist_item_url, data=json.dumps(self.new_bucketlist_item_data))
+        self.client.post(url_for('createbucketlistitem',
+                         id=self.created_bucketlist.id),
+                         data=json.dumps(self.new_bucketlist_item_data),
+                         headers=self.authorization,
+                         content_type='application/json')
+        self.created_item = BucketListItem.query.filter_by(bucketlist_id=self.created_bucketlist.id).one()
 
-        # Commits all of the bucketlist additions to db
         db.session.commit()
         db.session.expire_on_commit = False
 

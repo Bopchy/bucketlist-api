@@ -1,7 +1,8 @@
 from flask import g
 from flask_restful import Resource, reqparse
 
-from bapi.bucketlist_models import Bucketlist, BucketListItem, DB
+from bapi import db
+from bapi.bucketlist_models import Bucketlist, BucketListItem
 from bapi.verification import token_auth
 
 
@@ -43,11 +44,11 @@ class CreateBucketlistItem(Resource):
                     new_bucketlist_item.bucketlist_id = bucketlist.id
 
                     try:
-                        DB.session.add(new_bucketlist_item)
-                        DB.session.commit()
-                        return {'message': " New item has been created."}, 201
+                        db.session.add(new_bucketlist_item)
+                        db.session.commit()
+                        return {'message': "New item has been created."}, 201
                     except Exception:
-                        DB.session.rollback()
+                        db.session.rollback()
                         return {'message': 'An error occured during saving.'}, 500
 
                 return {'message': 'A bucketlist with that id does not exist.'}, 404
@@ -100,10 +101,10 @@ class BucketlistItems(Resource):
                     bucketlist_item.done = args.done
 
                     try:
-                        DB.session.commit()
+                        db.session.commit()
                         return {'message': 'Changes have been made succesfully.'}, 200
                     except Exception:
-                        DB.session.rollback()
+                        db.session.rollback()
                         return {'message': 'An error occured during saving.'}, 500
 
                 return {'message': 'An item with that id was not found.'}, 404
@@ -123,10 +124,10 @@ class BucketlistItems(Resource):
 
                 try:
                     BucketListItem.query.filter_by(id=item_id).delete()
-                    DB.session.commit()
+                    db.session.commit()
                     return {'message': 'Item has been deleted successfully.'}, 200
                 except Exception:
-                    DB.session.rollback()
+                    db.session.rollback()
                     return {'message': 'An error occured during saving.'}, 200
 
             return {'message': "You are not authorized to delete this item"}, 401

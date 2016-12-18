@@ -4,9 +4,6 @@ from bapi import db, bcrypt
 from bapi.config import Config
 
 
-DB = db
-
-
 class Users(db.Model):
 
     """Model for Users table"""
