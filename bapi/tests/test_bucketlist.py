@@ -16,7 +16,8 @@ class TestBucketListEndpoints(BaseTestClass):
                                     headers=self.authorization,
                                     content_type='application/json')
         self.assertEqual(response.status_code, 201)
-        self.assertIn('New Bucketlist created successfully.', response.json['message'])
+        self.assertIn('New Bucketlist created successfully.',
+                      response.json['message'])
 
     def test_create_bucketlist_returns_409_if_bucketlist_name_exists(self):
         url = url_for('bucketlists')

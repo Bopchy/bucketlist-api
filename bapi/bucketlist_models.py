@@ -22,7 +22,8 @@ class Users(db.Model):
         self.hashed_password = bcrypt.generate_password_hash(hashed_password)
 
     def check_password(self, hashed_password):
-        return bcrypt.check_password_hash(self.hashed_password, hashed_password)
+        return bcrypt.check_password_hash(self.hashed_password,
+                                          hashed_password)
 
     def generate_auth_token(self, expiration=6000):
         """Creates an encoded string from dictionary containing the user's
@@ -46,7 +47,8 @@ class Bucketlist(db.Model):
     date_created = db.Column(db.DateTime, server_default=db.func.now())
     date_modified = db.Column(db.DateTime, server_default=db.func.now(),
                               onupdate=db.func.now())
-    created_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id',
+                           ondelete='CASCADE'))
 
     def __init__(self, name, created_by):
         self.name = name
@@ -60,7 +62,8 @@ class BucketListItem(db.Model):
     __tablename__ = 'bucketlistitem'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250))
-    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id', ondelete='CASCADE'))
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id',
+                              ondelete='CASCADE'))
     date_created = db.Column(db.DateTime, server_default=db.func.now())
     date_modified = db.Column(db.DateTime, server_default=db.func.now(),
                               onupdate=db.func.now())

@@ -12,9 +12,10 @@ jwt = Serializer(Config.SECRET_KEY)
 
 @token_auth.verify_token
 def verify_token(token):
-    # Decodes the token to get the user that was assigned token
-    # Ensures that token is authentic before decoding it and assiging
-    # user with the token's request context (g).
+    """ Decodes the token to get the user that was assigned specified token,
+    then ensures that the token is authentic before decoding it and assigning
+    user with the token's request context (g)
+    """
 
     try:
         data = jwt.loads(token)

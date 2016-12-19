@@ -9,12 +9,12 @@ app.config.from_object(config['development'])
 
 
 def make_shell_context():
+    """ Allows for migrations using the db command
+    Also allows for access shell as above.
+    """
     return dict(Users=Users,
                 Bucketlist=Bucketlist,
                 BucketListItem=BucketListItem)
-
-# Allows us to make migrations using the db command
-# Allows use to access shell as above.
 
 
 manager = Manager(app)

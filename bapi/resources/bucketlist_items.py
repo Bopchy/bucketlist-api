@@ -20,13 +20,14 @@ class CreateBucketlistItem(Resource):
             create_item = reqparse.RequestParser()
             create_item.add_argument('name', type=str, required=True,
                                      location='json')
-            create_item.add_argument('done', type=str, required=False, default='No',
-                                     location='json')
+            create_item.add_argument('done', type=str, required=False,
+                                     default='No', location='json')
             args = create_item.parse_args()
 
             if id:
 
-                bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
+                bucketlist = Bucketlist.query.filter_by(created_by=g.user.id,
+                                                        id=id).first()
                 if bucketlist:
 
                     if args.done.lower() == 'no' or args.done is None:
@@ -40,7 +41,8 @@ class CreateBucketlistItem(Resource):
                         return {'message': 'Please provide a name for the new bucketlist item.'}, 400
                     elif args.name in existing_items:
                         return {'message': 'Item with that name already exists in this bucketlist.'}, 409
-                    new_bucketlist_item = BucketListItem(name=args.name, done=done)
+                    new_bucketlist_item = BucketListItem(name=args.name,
+                                                         done=done)
                     new_bucketlist_item.bucketlist_id = bucketlist.id
 
                     try:
@@ -61,7 +63,7 @@ class CreateBucketlistItem(Resource):
 
 class BucketlistItems(Resource):
 
-    """Update and Delete BucketlistItems."""
+    """Update and Delete Bucketlist Items."""
 
     @token_auth.login_required
     def put(self, id, item_id):
@@ -70,13 +72,15 @@ class BucketlistItems(Resource):
             item_query = BucketListItem.query.filter_by(bucketlist_id=id).all()
             existing_items = [item.name for item in item_query]
 
-            # Updates a single bucketlist item
             parser = reqparse.RequestParser()
-            parser.add_argument('name', type=str, required=False, location='json')
-            parser.add_argument('done', type=str, required=False, location='json')
+            parser.add_argument('name', type=str, required=False,
+                                location='json')
+            parser.add_argument('done', type=str, required=False,
+                                location='json')
             args = parser.parse_args()
 
-            bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
+            bucketlist = Bucketlist.query.filter_by(created_by=g.user.id,
+                                                    id=id).first()
             if bucketlist:
 
                 bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=id, id=item_id).first()
@@ -118,7 +122,6 @@ class BucketlistItems(Resource):
     def delete(self, id, item_id):
         try:
 
-            # Deletes a single bucketlist item
             bucketlist = Bucketlist.query.filter_by(id=id, created_by=g.user.id).first()
             if bucketlist:
 

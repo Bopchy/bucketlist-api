@@ -18,7 +18,6 @@ class Bucketlists(Resource):
     def get(self):
         try:
 
-            # Lists all existing bucketlists
             q = request.args.get('q', '')
 
             try:
@@ -35,15 +34,7 @@ class Bucketlists(Resource):
                 Bucketlist.created_by == g.user.id, Bucketlist.name.ilike(
                     '%' + q + '%')).paginate(page, limit, True)
 
-            # import ipdb; ipdb.set_trace()
             if all_bucketlists:
-
-                # if q:
-                #     search_results = Bucketlist.query.filter(Bucketlist.created_by == g.user.id, Bucketlist.name.ilike(
-                #         '%' + q + '%')).paginate(int(page), int(limit), True).items
-                #     if not search_results:
-                #         return {'message': 'Found no bucketlists matching your query.'}, 200
-                #     return marshal(search_results, bucketlist_serial)
 
                 all_pages = all_bucketlists.pages
                 next_page = all_bucketlists.has_next
@@ -78,7 +69,6 @@ class Bucketlists(Resource):
 
             existing = [item.name for item in Bucketlist.query.all()]
 
-            # Creates a new bucketlist
             self.bucketlist = reqparse.RequestParser()
             self.bucketlist.add_argument('name', type=str, required=True,
                                          location='json')
@@ -111,7 +101,6 @@ class SingleBucketlist(Resource):
     def get(self, id):
         try:
 
-            # Lists a single bucketlist
             requested_bucketlist = Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
 
             if requested_bucketlist:
@@ -127,7 +116,6 @@ class SingleBucketlist(Resource):
 
             existing = [item.name for item in Bucketlist.query.all()]
 
-            # Updates a single bucketlist
             self.new = reqparse.RequestParser()
             self.new.add_argument('name', type=str, required=True, location='json')
             self.args = self.new.parse_args()
@@ -159,7 +147,6 @@ class SingleBucketlist(Resource):
     def delete(self, id):
         try:
 
-            # Deletes a single bucketlist
             if id:
 
                 try:
