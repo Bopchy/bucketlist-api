@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 from flask import g
 from flask_restful import Resource, reqparse, request, marshal
 
@@ -5,6 +6,7 @@ from bapi import db
 from bapi.verification import token_auth
 from bapi.bucketlist_models import Bucketlist, BucketListItem
 from bapi.serializers import bucketlist_serial
+# from bapi.resources.login import token
 
 
 class Bucketlists(Resource):
@@ -39,17 +41,20 @@ class Bucketlists(Resource):
                 all_pages = all_bucketlists.pages
                 next_page = all_bucketlists.has_next
                 prev_page = all_bucketlists.has_prev
-                #
-                # if next_page:
-                #     next_page = str(request.url.root) + '/bucketlists?' + \
-                #         'limit=' + str(limit) + '&page=' + str(page + 1)
-                #
-                # next_page = None
-                #
-                # if prev_page:
-                #     prev_page = str(request.url.root) + '/bucketlists?' + \
-                #         'limit=' + str(limit) + '&page=' + str(page - 1)
-                # prev_page = None
+                url = urlparse(request.url)
+                root_url = url.scheme + '://' + url.netloc + url.path
+
+                if next_page:
+                    next_page = root_url + 'limit=' + str(limit) + '&page=' + \
+                        str(page + 1)
+                else:
+                    next_page = None
+
+                if prev_page:
+                    prev_page = root_url + 'limit=' + str(limit) + '&page=' + \
+                        str(page - 1)
+                else:
+                    prev_page = None
 
                 all_bucketlists = all_bucketlists.items
 
@@ -60,8 +65,8 @@ class Bucketlists(Resource):
 
             return {'message': 'There are currently no existing bucketlists.'}, 200
 
-        except Exception as e:
-            return {'message': e}, 403
+        except AttributeError:
+            return {'message': 'You are not authorized to access this URL.'}, 403
 
     @token_auth.login_required
     def post(self):
