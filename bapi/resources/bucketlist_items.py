@@ -35,12 +35,15 @@ class CreateBucketlistItem(Resource):
                     elif args.done.lower() == 'yes':
                         done = True
                     else:
-                        return {'message': "Use either 'Yes' or 'No' for done"}, 400
+                        return {'message': "Use either 'Yes' or 'No' for \
+                            done"}, 400
 
                     if args.name == "" or args.name == " ":
-                        return {'message': 'Please provide a name for the new bucketlist item.'}, 400
+                        return {'message': 'Please provide a name for the new \
+                            bucketlist item.'}, 400
                     elif args.name in existing_items:
-                        return {'message': 'Item with that name already exists in this bucketlist.'}, 409
+                        return {'message': 'Item with that name already exists \
+                            in this bucketlist.'}, 409
                     new_bucketlist_item = BucketListItem(name=args.name,
                                                          done=done)
                     new_bucketlist_item.bucketlist_id = bucketlist.id
@@ -51,14 +54,18 @@ class CreateBucketlistItem(Resource):
                         return {'message': "New item has been created."}, 201
                     except Exception:
                         db.session.rollback()
-                        return {'message': 'An error occured during saving.'}, 500
+                        return {'message': 'An error occured during saving.'},\
+                            500
 
-                return {'message': 'A bucketlist with that id does not exist.'}, 404
+                return {'message': 'A bucketlist with that id does not \
+                    exist.'}, 404
 
-            return {'message': 'Provide a bucketlist id for this operation.'}, 400
+            return {'message': 'Provide a bucketlist id for this operation.'},\
+                400
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'}, 403
+            return {'message': 'You are not authorized to access this URL.'},\
+                403
 
 
 class BucketlistItems(Resource):
@@ -83,7 +90,8 @@ class BucketlistItems(Resource):
                                                     id=id).first()
             if bucketlist:
 
-                bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=id, id=item_id).first()
+                bucketlist_item = BucketListItem.query.filter_by(
+                    bucketlist_id=id, id=item_id).first()
 
                 if bucketlist_item:
 
@@ -92,48 +100,60 @@ class BucketlistItems(Resource):
                     elif args.done.lower() == 'yes':
                         args.done = True
                     else:
-                        return {'message': "Use either 'Yes' or 'No' for done"}, 400
+                        return {'message': "Use either 'Yes' or 'No' for \
+                            done"}, 400
 
                     if args.name is None:
                         args.name = bucketlist_item.name
                     elif args.name in existing_items:
-                        return {'message': 'Item with that name already exists in this bucketlist.'}, 409
+                        return {'message': 'Item with that name already \
+                            exists in this bucketlist.'}, 409
                     elif args.name is "" or args.name is " ":
-                        return {'message': 'You cannot have a nameless bucketlist item'}, 400
+                        return {'message': 'You cannot have a nameless \
+                            bucketlist item'}, 400
 
                     bucketlist_item.name = args.name
                     bucketlist_item.done = args.done
 
                     try:
                         db.session.commit()
-                        return {'message': 'Changes have been made succesfully.'}, 200
+                        return {'message': 'Changes have been made \
+                            succesfully.'}, 200
                     except Exception:
                         db.session.rollback()
-                        return {'message': 'An error occured during saving.'}, 500
+                        return {'message': 'An error occured during \
+                            saving.'}, 500
 
                 return {'message': 'An item with that id was not found.'}, 404
 
-            return {'message': 'You do not have a bucketlist with that id.'}, 404
+            return {'message': 'You do not have a bucketlist with that \
+                id.'}, 404
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'}, 403
+            return {'message': 'You are not authorized to access this \
+                URL.'}, 403
 
     @token_auth.login_required
     def delete(self, id, item_id):
         try:
 
-            bucketlist = Bucketlist.query.filter_by(id=id, created_by=g.user.id).first()
+            bucketlist = \
+                Bucketlist.query.filter_by(id=id, created_by=g.user.id).first()
             if bucketlist:
 
                 try:
                     BucketListItem.query.filter_by(id=item_id).delete()
                     db.session.commit()
-                    return {'message': 'Item has been deleted successfully.'}, 200
+                    return {'message': 'Item has been deleted successfully.'},\
+                        200
                 except Exception:
                     db.session.rollback()
-                    return {'message': 'An error occured during saving.'}, 200
+                    return {'message': 'An error occured during saving.'},\
+                        200
 
-            return {'message': "You are not authorized to delete this item"}, 401
+            return {'message': "You are not authorized to delete this item"},\
+                401
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'}, 403
+            return {'message': 'You are not authorized to access this URL.'},\
+                403

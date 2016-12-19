@@ -49,14 +49,17 @@ class BaseTestClass(TestCase):
                          headers=self.authorization,
                          content_type='application/json')
 
-        self.created_bucketlist = Bucketlist.query.filter_by(name=self.new_bucketlist_data['name']).one()
+        self.created_bucketlist = \
+            Bucketlist.query.filter_by(name=self.new_bucketlist_data['name']).\
+            one()
         self.new_bucketlist_item_data = {'name': 'Go bungee jumping.'}
         self.client.post(url_for('createbucketlistitem',
                          id=self.created_bucketlist.id),
                          data=json.dumps(self.new_bucketlist_item_data),
                          headers=self.authorization,
                          content_type='application/json')
-        self.created_item = BucketListItem.query.filter_by(bucketlist_id=self.created_bucketlist.id).one()
+        self.created_item = BucketListItem.query.\
+            filter_by(bucketlist_id=self.created_bucketlist.id).one()
 
         db.session.commit()
         db.session.expire_on_commit = False
