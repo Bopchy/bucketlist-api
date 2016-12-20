@@ -67,7 +67,7 @@ class Bucketlists(Resource):
                 '}, 200
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'}, \
+            return {'message': 'You are not authorized to access this item.'},\
                 403
 
     @token_auth.login_required
@@ -85,8 +85,9 @@ class Bucketlists(Resource):
                 return {'message': 'Provide a name for the new bucketlist.'}, \
                     400
             elif self.args.name in existing:
-                return {'message': 'You already have a Bucketlist with that \
-                    name.'}, 409
+                return {
+                    'message': 'You already have a Bucketlist with that name.'
+                }, 409
 
             new_bucketlist = Bucketlist(name=self.args.name,
                                         created_by=g.user.id)
@@ -100,7 +101,7 @@ class Bucketlists(Resource):
                 return {'message': 'An error occured during saving.'}, 500
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'}, \
+            return {'message': 'You are not authorized to access this item.'},\
                 403
 
 
@@ -121,7 +122,7 @@ class SingleBucketlist(Resource):
                 404
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'}, \
+            return {'message': 'You are not authorized to access this item.'},\
                 403
 
     @token_auth.login_required
@@ -142,8 +143,9 @@ class SingleBucketlist(Resource):
                 if bucketlist:
 
                     if self.args.name in existing:
-                        return {'message': 'You already have a Bucketlist \
-                            with that name.'}, 409
+                        return {
+                            'message': 'You already have a Bucketlist with that name.'
+                        }, 409
 
                     try:
                         bucketlist.name = self.args.name
@@ -155,14 +157,15 @@ class SingleBucketlist(Resource):
                         return {'message': 'An error occured during saving.'},\
                             500
 
-                return {'message': 'A bucketlist with that id was not found.\
-                    '}, 404
+                return {
+                    'message': 'A bucketlist with that id was not found.'
+                }, 404
 
             return {'message': 'Provide a new name to edit this Bucketlist.'},\
                 400
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'},\
+            return {'message': 'You are not authorized to access this item.'},\
                 403
 
     @token_auth.login_required
@@ -181,9 +184,10 @@ class SingleBucketlist(Resource):
                     db.session.rollback()
                     return {'message': 'An error occured during saving.'}, 500
 
-            return {'message': 'You must provide a bucketlist id to delete a \
-                Bucketlist.'}, 204
+            return {
+                'message': 'You must provide a bucketlist id to delete a Bucketlist.'
+            }, 204
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'},\
+            return {'message': 'You are not authorized to access this item.'},\
                 403

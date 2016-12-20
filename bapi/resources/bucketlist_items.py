@@ -14,9 +14,6 @@ class CreateBucketlistItem(Resource):
     def post(self, id):
         try:
 
-            item_query = BucketListItem.query.filter_by(bucketlist_id=id).all()
-            existing_items = [item.name for item in item_query]
-
             create_item = reqparse.RequestParser()
             create_item.add_argument('name', type=str, required=True,
                                      location='json')
@@ -24,47 +21,51 @@ class CreateBucketlistItem(Resource):
                                      default='No', location='json')
             args = create_item.parse_args()
 
-            if id:
+            bucketlist = Bucketlist.query.\
+                filter_by(created_by=g.user.id, id=id).first()
 
-                bucketlist = Bucketlist.query.filter_by(created_by=g.user.id,
-                                                        id=id).first()
-                if bucketlist:
+            # import ipdb; ipdb.set_trace()
 
-                    if args.done.lower() == 'no' or args.done is None:
-                        done = False
-                    elif args.done.lower() == 'yes':
-                        done = True
-                    else:
-                        return {'message': "Use either 'Yes' or 'No' for \
-                            done"}, 400
+            if bucketlist:
 
-                    if args.name == "" or args.name == " ":
-                        return {'message': 'Please provide a name for the new \
-                            bucketlist item.'}, 400
-                    elif args.name in existing_items:
-                        return {'message': 'Item with that name already exists \
-                            in this bucketlist.'}, 409
-                    new_bucketlist_item = BucketListItem(name=args.name,
-                                                         done=done)
-                    new_bucketlist_item.bucketlist_id = bucketlist.id
+                item_query = \
+                    BucketListItem.query.filter_by(bucketlist_id=id).all()
+                existing_items = [item.name for item in item_query]
 
-                    try:
-                        db.session.add(new_bucketlist_item)
-                        db.session.commit()
-                        return {'message': "New item has been created."}, 201
-                    except Exception:
-                        db.session.rollback()
-                        return {'message': 'An error occured during saving.'},\
-                            500
+                if args.done.lower() == 'no' or args.done.lower() == 'yes':
+                    done = args.done
+                else:
+                    return {
+                        'message': "Use either 'Yes' or 'No' for done"
+                    }, 400
 
-                return {'message': 'A bucketlist with that id does not \
-                    exist.'}, 404
+                if args.name == "" or args.name == " ":
+                    return {
+                        'message': 'Please provide a name for the new bucketlist\
+                         item.'
+                    }, 400
+                elif args.name in existing_items:
+                    return {'message': 'Item with that name already exists \
+                        in this bucketlist.'}, 409
+                new_bucketlist_item = BucketListItem(name=args.name,
+                                                     done=done)
+                new_bucketlist_item.bucketlist_id = bucketlist.id
+                # import ipdb; ipdb.set_trace()
+                try:
+                    db.session.add(new_bucketlist_item)
+                    db.session.commit()
+                    return {'message': "New item has been created."}, 201
+                except Exception as e:
+                    db.session.rollback()
+                    # return {'message': 'An error occured during saving.'},\
+                        # 500
+                    return {'message': e}
 
-            return {'message': 'Provide a bucketlist id for this operation.'},\
-                400
+            return {'message': 'A bucketlist with that id does not \
+                exist.'}, 404
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'},\
+            return {'message': 'You are not authorized to access this item.'},\
                 403
 
 
@@ -74,10 +75,8 @@ class BucketlistItems(Resource):
 
     @token_auth.login_required
     def put(self, id, item_id):
+        # import ipdb; ipdb.set_trace()
         try:
-
-            item_query = BucketListItem.query.filter_by(bucketlist_id=id).all()
-            existing_items = [item.name for item in item_query]
 
             parser = reqparse.RequestParser()
             parser.add_argument('name', type=str, required=False,
@@ -94,44 +93,53 @@ class BucketlistItems(Resource):
                     bucketlist_id=id, id=item_id).first()
 
                 if bucketlist_item:
+                    item_query = BucketListItem.query.\
+                        filter_by(bucketlist_id=id).all()
+                    existing_items = [item.name for item in item_query]
 
-                    if args.done.lower() == 'no' or args.done is None:
-                        args.done = False
-                    elif args.done.lower() == 'yes':
-                        args.done = True
+                    if args.done is None:
+                        args.done = bucketlist_item.done
+                    elif args.done.lower() == 'no' or args.done.lower() == 'yes':
+                        bucketlist_item.done = args.done
                     else:
-                        return {'message': "Use either 'Yes' or 'No' for \
-                            done"}, 400
+                        return {
+                            'message': "Use either 'Yes' or 'No' for done"
+                        }, 400
 
                     if args.name is None:
                         args.name = bucketlist_item.name
                     elif args.name in existing_items:
-                        return {'message': 'Item with that name already \
-                            exists in this bucketlist.'}, 409
+                        return {
+                            'message': 'Item with that name already exists in this bucketlist.'
+                        }, 409
                     elif args.name is "" or args.name is " ":
-                        return {'message': 'You cannot have a nameless \
-                            bucketlist item'}, 400
+                        return {
+                            'message': 'You cannot have a nameless bucketlist item'
+                        }, 400
 
                     bucketlist_item.name = args.name
-                    bucketlist_item.done = args.done
 
                     try:
                         db.session.commit()
-                        return {'message': 'Changes have been made \
-                            succesfully.'}, 200
+                        return {
+                            'message': 'Changes have been made succesfully.'
+                        }, 200
                     except Exception:
                         db.session.rollback()
-                        return {'message': 'An error occured during \
-                            saving.'}, 500
+                        return {
+                            'message': 'An error occured during saving.'
+                        }, 500
 
                 return {'message': 'An item with that id was not found.'}, 404
 
-            return {'message': 'You do not have a bucketlist with that \
-                id.'}, 404
+            return {
+                'message': 'You do not have a bucketlist with that id.'
+            }, 404
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this \
-                URL.'}, 403
+            return {
+                'message': 'You are not authorized to access this item.'
+            }, 403
 
     @token_auth.login_required
     def delete(self, id, item_id):
@@ -155,5 +163,5 @@ class BucketlistItems(Resource):
                 401
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this URL.'},\
+            return {'message': 'You are not authorized to access this item.'},\
                 403

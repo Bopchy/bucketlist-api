@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+import re
 
 from bapi import db
 from bapi.bucketlist_models import Users
@@ -18,7 +19,9 @@ class Register(Resource):
                                      location='json')
         self.args = self.bapi_users.parse_args()
 
-        if '@' not in self.args.email or '.com' not in self.args.email:
+        # if '@' not in self.args.email or '.com' not in self.args.email:
+        if not re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
+                        self.args.email):
             return {'message': 'Invalid email provided'}, 422
         user = Users.query.filter_by(username=self.args.username).first()
         if user:

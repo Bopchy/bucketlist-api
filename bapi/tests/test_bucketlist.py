@@ -74,6 +74,7 @@ class TestBucketListEndpoints(BaseTestClass):
         url = url_for('bucketlistitems', id=self.created_bucketlist.id,
                       item_id=self.created_item.id)
         data = {'name': 'Go bungee jumping on a waterfall.'}
+        # import ipdb; ipdb.set_trace()
         response = self.client.put(url, data=json.dumps(data),
                                    headers=self.authorization,
                                    content_type='application/json')
