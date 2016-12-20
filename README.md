@@ -81,9 +81,8 @@ the respective keys mentioned in the config.py file.
 ### Usage
 
 This section will utilize the Postman REST client to demonstrate  Bapi's CRUD functionality.
-The body content for Postman should be set to **raw** and **JSON(application/json)** since we are using JSON.
-
-We will also use Flask's localhost server, with port 5000.
+The body content for Postman should be set to **raw** and **JSON(application/json)** since we
+are using JSON. We will also use Flask's localhost server, with port 5000.
 
 #### Registering a user
 
@@ -99,7 +98,7 @@ To login the created user, have ```/auth/login``` as your URL; and ensure that t
 
   `{"username": "bapito", "password": "pass"}`
 
-    ![Demo](/bapi/docs_images/login.png)
+    ![Demo](/bapi/docs_images/login.png?raw=true)
 
 Take note of the token that was produced in the response body.
 
@@ -108,13 +107,13 @@ Take note of the token that was produced in the response body.
 To create a bucketlist, have ```/bucketlists/``` as your URL;
 and ensure that the method is a POST. In order to create a bucketlist, you require an authorization token. The token that was produced when user was logged in, is what should be placed in the headers section; preceded by the word 'Token'.
 
-    ![Demo](/bapi/docs_images/token.png)
+    ![Demo](/bapi/docs_images/token.png?raw=true)
 
 Provide a name for the bucketlist
 
     `{"name": "Bapito's first bucketlist"}`
 
-    ![Demo](/bapi/docs_images/bucketlist_creation.png)
+    ![Demo](/bapi/docs_images/bucketlist_creation.png?raw=true)
 
 #### Creating a bucketlist item
 
@@ -123,12 +122,12 @@ which you want the item to belong. Ensure that the method is POST. Provide a nam
 
   `{"name": "Go to the Netherlands"}`
 
-    ![Demo](/bapi/docs_images/bucketlist_item_creation.png)
+    ![Demo](/bapi/docs_images/bucketlist_item_creation.png?raw=true)
 
 To retrieve a single bucketlist, have ```/bucketlists/<id>``` as your URL, and the method
 as GET -- where <id> is the id of the bucketlist.
 
-    ![Demo](/bapi/docs_images/bucketlist_list.png)
+    ![Demo](/bapi/docs_images/bucketlist_list.png?raw=true)
 
 #### Editing bucketlist and bucketlist item
 
@@ -136,15 +135,15 @@ To edit a bucketlist, have ```/bucketlists/<id>``` as your URL; and the method a
 
   `{"name": "Bapito's travel bucketlist"}`
 
-    ![Demo](/bapi/docs_images/edit_bucketlist.png)
+    ![Demo](/bapi/docs_images/edit_bucketlist.png?raw=true)
 
 To edit an item in the bucketlist, have ```/bucketlists/<id>/items/<item_id>``` as your URL, and your method as PUT. Then provide the new item name.
 
-    ![Demo](/bapi/docs_images/edit_bucketlist_item.png)
+    ![Demo](/bapi/docs_images/edit_bucketlist_item.png?raw=true)
 
 The edited buckelist and bucketlist item:
 
-    ![Demo](/bapi/docs_images/list_edited.png)
+    ![Demo](/bapi/docs_images/list_edited.png?raw=true)
 
 #### Searching for a bucketlist, with a limit
 
@@ -152,27 +151,27 @@ Bapi has a feature for searching for bucketlists by name. To do that simply have
 
   `/bucketlists?q=travel`
 
-    ![Demo](/bapi/docs_images/list_edited.png)
+    ![Demo](/bapi/docs_images/list_edited.png?raw=true)
 
 You can also limit the number of search results that you receive in the response by using a limit parameter.
 
   `/bucketlists?q=travel&limit=1`
 
-    ![Demo](/bapi/docs_images/list_searching_with_limit.png)
+    ![Demo](/bapi/docs_images/list_searching_with_limit.png?raw=true)
 
 #### Deleting a bucketlist item and a bucketlist
 
 You can delete an item inside a bucketlist by having ```/bucketlists/<id>/items/<item_id>``` as your URL, and the method as DELETE.
 
-    ![Demo](/bapi/docs_images/list_item_delete.png)
+    ![Demo](/bapi/docs_images/list_item_delete.png?raw=true)
 
 The same can be achieved for a bucketlist with ```/bucketlists/<id>``` as your URL and the method as DELETE.
 
-    ![Demo](/bapi/docs_images/list_bucketlist_delete.png)
+    ![Demo](/bapi/docs_images/list_bucketlist_delete.png?raw=true)
 
 Below we see that the bucketlist is gone.
 
-    ![Demo](/bapi/docs_images/list_bucketlist_delete.png)
+    ![Demo](/bapi/docs_images/list_bucketlist_delete.png?raw=true)
 
 ## Running the tests
 
