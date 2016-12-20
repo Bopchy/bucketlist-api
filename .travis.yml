@@ -8,9 +8,17 @@ install:
 script:
   - nosetests
 # environment variables
+<<<<<<< HEAD
 # env:
 #   global:
 #     - SECRET_KEY="JdN!$Jzxor^ecdjIoEMuRw8ozD!MtB"
 #     - SQLALCHEMY_TEST_DATABASE="sqlite:///test_db.sqlite"
 #     - SQLALCHEMY_DEV_DATABASE="sqlite:///dev_db.sqlite"
 #     - SQLALCHEMY_PROD_DATABASE="sqlite:///prod_db.sqlite"
+=======
+env:
+  - SECRET_KEY="JdN!$Jzxor^ecdjIoEMuRw8ozD!MtB"
+  - SQLALCHEMY_TEST_DATABASE="sqlite:///test_db.sqlite"
+  - SQLALCHEMY_DEV_DATABASE="sqlite:///dev_db.sqlite"
+  - SQLALCHEMY_PROD_DATABASE="sqlite:///prod_db.sqlite"
+>>>>>>> 52bcd80... [Chore #136105905] Fixes images
