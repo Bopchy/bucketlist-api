@@ -1,6 +1,5 @@
 .DS_Store
 *.pyc
-.env
 .coverage
 *.sqlite
 tox.ini

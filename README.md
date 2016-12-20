@@ -44,35 +44,35 @@ To set up the environment:
 
   * First, clone the repo by running
 
-    ```git clone https://github.com/Bopchy/bucketlist-api.git```
+    `git clone https://github.com/Bopchy/bucketlist-api.git`
 
   * Create a Python3 virtual environment called bucketlist by running
 
-    ```virtualenv -p python3 bucketlist```
+    `virtualenv -p python3 bucketlist`
 
     then activate it by
 
-    ```source bucketlist/bin/activate```
+    `source bucketlist/bin/activate`
 
     or
 
-    ```mkvirtualenv -p python3 bucketlist```
+    `mkvirtualenv -p python3 bucketlist`
 
     then activate it by
 
-    ```workon bucketlist```
+    `workon bucketlist`
 
     if you use virtualenvwrapper
 
   * Install the necessary prerequisites by running
 
-    ```pip install -r requirements.txt```
+    `pip install -r requirements.txt`
 
     from inside the bucketlist-api folder
 
   * Run the bash script to set up the database, like so
 
-    ```sh bucketlist_api_script.sh```
+    `sh bucketlist_api_script.sh`
 
 **Note:** You will need to set up your database paths and SECRET_KEY in your environment.
 You will need to set up a path for the Development, Test and Production environments with
@@ -89,8 +89,7 @@ We will also use Flask's localhost server, with port 5000.
 
 To register a user have ```/auth/register``` as your URL, ensure that the method is a POST. Provide a username, email and password like so
 
-   ```{"username": "bapito", "email": "bapito@email.com", "password": "pass"}
-   ```
+   `{"username": "bapito", "email": "bapito@email.com", "password": "pass"}`
 
    ![Demo](/bapi/docs_images/register.png)
 
@@ -98,8 +97,7 @@ To register a user have ```/auth/register``` as your URL, ensure that the method
 
 To login the created user, have ```/auth/login``` as your URL; and ensure that the method is a POST. Provide a username and password
 
-  ```{"username": "bapito", "password": "pass"}
-  ```
+  `{"username": "bapito", "password": "pass"}`
 
     ![Demo](/bapi/docs_images/login.png)
 
@@ -114,8 +112,7 @@ and ensure that the method is a POST. In order to create a bucketlist, you requi
 
 Provide a name for the bucketlist
 
-    ```{"name": "Bapito's first bucketlist"}
-    ```
+    `{"name": "Bapito's first bucketlist"}`
 
     ![Demo](/bapi/docs_images/bucketlist_creation.png)
 
@@ -124,8 +121,7 @@ Provide a name for the bucketlist
 To create an item inside the bucketlist that was just created, have ```/bucketlists/<id>/items/``` as your URL. The <id> refers to the id of the bucketlist to
 which you want the item to belong. Ensure that the method is POST. Provide a name
 
-  ```{"name": "Go to the Netherlands"}
-  ```
+  `{"name": "Go to the Netherlands"}`
 
     ![Demo](/bapi/docs_images/bucketlist_item_creation.png)
 
@@ -138,8 +134,7 @@ as GET -- where <id> is the id of the bucketlist.
 
 To edit a bucketlist, have ```/bucketlists/<id>``` as your URL; and the method as PUT. Provide the new name for the bucketlist
 
-  ```{"name": "Bapito's travel bucketlist"}
-  ```
+  `{"name": "Bapito's travel bucketlist"}`
 
     ![Demo](/bapi/docs_images/edit_bucketlist.png)
 
@@ -155,15 +150,13 @@ The edited buckelist and bucketlist item:
 
 Bapi has a feature for searching for bucketlists by name. To do that simply have ```/bucketlists?q=``` as your URL, with the word that you wish to search for coming after q
 
-  ```/bucketlists?q=travel
-  ```
+  `/bucketlists?q=travel`
 
     ![Demo](/bapi/docs_images/list_edited.png)
 
 You can also limit the number of search results that you receive in the response by using a limit parameter.
 
-  ```/bucketlists?q=travel&limit=1
-  ```
+  `/bucketlists?q=travel&limit=1`
 
     ![Demo](/bapi/docs_images/list_searching_with_limit.png)
 
@@ -185,13 +178,11 @@ Below we see that the bucketlist is gone.
 
 To run the tests run:
 
-  ```nosetests
-  ```
+  `nosetests`
 
 To see the test coverage run:
 
-  ```nosetests --with-coverage
-  ```
+  `nosetests --with-coverage`
 
 ## Built with
 
