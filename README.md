@@ -5,12 +5,11 @@
 
 Do you need a bucketlist API in your life?
 
-As mentioned in the title, Bapi is a Flask RESTful bucketlist API. It allows you to
-create bucketlists and create items inside those bucketlists. Once created, you can
-perform CRUD (where Create, Read, Update and Delete refer to POST, GET, PUT, DELETE
-operations respectively) operations on your bucketlists as well as the items within
-them. The section on functionality below provides more information on these CRUD
-operations.
+Bapi is a Flask RESTful bucketlist API. It allows you to create bucketlists and create
+items inside those bucketlists. Once created, you can perform CRUD (where Create, Read,
+Update and Delete refer to POST, GET, PUT, DELETE operations respectively) operations on
+your bucketlists as well as the items within them. The section on functionality below
+lists the endpoints for these CRUD operations.
 
 ## Functionality
 
@@ -32,7 +31,7 @@ DELETE | ```/bucketlists/<id>/items/<item_id>```| Deletes specified item from th
 
 ## Getting started
 
-This section explains how to setup the API and get it up and running.
+This section explains how to get the API up and running.
 
 ### Prerequisites
 
@@ -45,41 +44,35 @@ To set up the environment:
 
   * First, clone the repo by running
 
-    ```git clone https://github.com/Bopchy/bucketlist-api.git
-    ```
+    ```git clone https://github.com/Bopchy/bucketlist-api.git```
 
   * Create a Python3 virtual environment called bucketlist by running
 
-    ```virtualenv -p python3 bucketlist
-    ```
+    ```virtualenv -p python3 bucketlist```
 
     then activate it by
 
-    ```source bucketlist/bin/activate
-    ```
+    ```source bucketlist/bin/activate```
 
     or
 
-    ```mkvirtualenv -p python3 bucketlist
-    ```
+    ```mkvirtualenv -p python3 bucketlist```
 
     then activate it by
 
-    ```workon bucketlist
-    ```
+    ```workon bucketlist```
 
     if you use virtualenvwrapper
 
   * Install the necessary prerequisites by running
 
-    ```pip install -r requirements.txt
-    ```
+    ```pip install -r requirements.txt```
+
     from inside the bucketlist-api folder
 
   * Run the bash script to set up the database, like so
 
-    ```sh bucketlist_api_script.sh
-    ```
+    ```sh bucketlist_api_script.sh```
 
 **Note:** You will need to set up your database paths and SECRET_KEY in your environment.
 You will need to set up a path for the Development, Test and Production environments with
@@ -185,7 +178,7 @@ The same can be achieved for a bucketlist with ```/bucketlists/<id>``` as your U
 
 Below we see that the bucketlist is gone.
 
-    ![Demo](/bapi/docs_images/no_bucketlists.png)
+    ![Demo](/bapi/docs_images/list_bucketlist_delete.png)
 
 ## Running the tests
 
