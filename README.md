@@ -18,16 +18,16 @@ functionalities.
 
 METHOD | ENDPOINT | FUNCTIONALITY
 --- | --- | ---
-POST| ```/auth/login``` | Logs a user in
-POST | ```/auth/register``` | Registers a user
-POST| ```/bucketlists/``` | Creates a new bucketlist
-GET|  ```/bucketlists/``` | Lists all the created bucketlists
-GET|  ```/bucketlists/<id>```| Retrieves a single bucketlist
-PUT| ```/bucketlists/<id>```| Updates the specified bucketlist
-DELETE | ```/bucketlists/<id>```| Deletes the specified bucketlist
-POST| ```/bucketlists/<id>/items/```| Creates a new item in the specified bucketlist
-PUT | ```/bucketlists/<id>/items/<item_id>```|Updates specified item in the specified bucketlist
-DELETE | ```/bucketlists/<id>/items/<item_id>```| Deletes specified item from the specified bucketlist
+POST| `/auth/login` | Logs a user in
+POST | `/auth/register` | Registers a user
+POST| `/bucketlists/` | Creates a new bucketlist
+GET|  `/bucketlists/` | Lists all the created bucketlists
+GET|  `/bucketlists/<id>`| Retrieves a single bucketlist
+PUT| `/bucketlists/<id>`| Updates the specified bucketlist
+DELETE | `/bucketlists/<id>`| Deletes the specified bucketlist
+POST| `/bucketlists/<id>/items/`| Creates a new item in the specified bucketlist
+PUT | `/bucketlists/<id>/items/<item_id>`|Updates specified item in the specified bucketlist
+DELETE | `/bucketlists/<id>/items/<item_id>`| Deletes specified item from the specified bucketlist
 
 ## Getting started
 
@@ -44,7 +44,7 @@ To set up the environment:
 
   * First, clone the repo by running
 
-    `git clone https://github.com/Bopchy/bucketlist-api.git`
+    `git clone.git`
 
   * Create a Python3 virtual environment called bucketlist by running
 
@@ -86,102 +86,104 @@ are using JSON. We will also use Flask's localhost server, with port 5000.
 
 #### Registering a user
 
-To register a user have ```/auth/register``` as your URL, ensure that the method is a POST. Provide a username, email and password like so
+To register a user have `/auth/register` as your URL, ensure that the method is a POST. Provide a username, email and password like so
 
-   `{"username": "bapito", "email": "bapito@email.com", "password": "pass"}`
+`{"username": "bapito", "email": "bapito@email.com", "password": "pass"}`
 
-   ![Demo](/bapi/docs_images/register.png)
+![Demo](/bapi/docs_images/register.png?raw=true)
 
 #### Logging in the user
 
-To login the created user, have ```/auth/login``` as your URL; and ensure that the method is a POST. Provide a username and password
+To login the created user, have `auth/login` as your URL; and ensure that the method is a POST. Provide a username and password
 
-  `{"username": "bapito", "password": "pass"}`
+`{"username": "bapito", "password": "pass"}`
 
-    ![Demo](/bapi/docs_images/login.png?raw=true)
+![Demo](/bapi/docs_images/login.png?raw=true)
 
 Take note of the token that was produced in the response body.
 
 #### Creating a bucketlist
 
-To create a bucketlist, have ```/bucketlists/``` as your URL;
-and ensure that the method is a POST. In order to create a bucketlist, you require an authorization token. The token that was produced when user was logged in, is what should be placed in the headers section; preceded by the word 'Token'.
+To create a bucketlist, have `/bucketlists/` as your URL and ensure that the method is a POST.
 
-    ![Demo](/bapi/docs_images/token.png?raw=true)
+In order to create a bucketlist, you require an authorization token. The token that was produced when user was logged in, is what should be placed in the headers section; preceded by the word 'Token'.
+
+![Demo](/bapi/docs_images/token.png?raw=true)
 
 Provide a name for the bucketlist
 
-    `{"name": "Bapito's first bucketlist"}`
+`{"name": "Bapito's first bucketlist"}`
 
-    ![Demo](/bapi/docs_images/bucketlist_creation.png?raw=true)
+![Demo](/bapi/docs_images/bucketlist_creation.png?raw=true)
 
 #### Creating a bucketlist item
 
-To create an item inside the bucketlist that was just created, have ```/bucketlists/<id>/items/``` as your URL. The <id> refers to the id of the bucketlist to
-which you want the item to belong. Ensure that the method is POST. Provide a name
+To create an item inside the bucketlist that was just created, have `/bucketlists/<id>/items/` as your URL. The `<id>` refers to the id of the bucketlist to which you want the item to belong. Ensure that the method is POST. Provide a name
 
-  `{"name": "Go to the Netherlands"}`
+```
+{"name": "Go to the Netherlands"}`
+```
 
-    ![Demo](/bapi/docs_images/bucketlist_item_creation.png?raw=true)
+![Demo](/bapi/docs_images/bucketlist_item_creation.png?raw=true)
 
-To retrieve a single bucketlist, have ```/bucketlists/<id>``` as your URL, and the method
-as GET -- where <id> is the id of the bucketlist.
+To retrieve a single bucketlist, have `/bucketlists/<id>` as your URL, and the method
+as GET -- where `<id>` is the id of the bucketlist.
 
-    ![Demo](/bapi/docs_images/bucketlist_list.png?raw=true)
+![Demo](/bapi/docs_images/bucketlist_list.png?raw=true)
 
 #### Editing bucketlist and bucketlist item
 
-To edit a bucketlist, have ```/bucketlists/<id>``` as your URL; and the method as PUT. Provide the new name for the bucketlist
+To edit a bucketlist, have `/bucketlists/<id>` as your URL; and the method as PUT. Provide the new name for the bucketlist
 
-  `{"name": "Bapito's travel bucketlist"}`
+`{"name": "Bapito's travel bucketlist"}`
 
-    ![Demo](/bapi/docs_images/edit_bucketlist.png?raw=true)
+![Demo](/bapi/docs_images/edit_bucketlist.png?raw=true)
 
-To edit an item in the bucketlist, have ```/bucketlists/<id>/items/<item_id>``` as your URL, and your method as PUT. Then provide the new item name.
+To edit an item in the bucketlist, have `/bucketlists/<id>/items/<item_id>` as your URL, and your method as PUT. Then provide the new item name.
 
-    ![Demo](/bapi/docs_images/edit_bucketlist_item.png?raw=true)
+![Demo](/bapi/docs_images/edit_bucketlist_item.png?raw=true)
 
 The edited buckelist and bucketlist item:
 
-    ![Demo](/bapi/docs_images/list_edited.png?raw=true)
+![Demo](/bapi/docs_images/list_edited.png?raw=true)
 
 #### Searching for a bucketlist, with a limit
 
-Bapi has a feature for searching for bucketlists by name. To do that simply have ```/bucketlists?q=``` as your URL, with the word that you wish to search for coming after q
+Bapi has a feature for searching for bucketlists by name. To do that simply have `/bucketlists?q=` as your URL, with the word that you wish to search for coming after q
 
-  `/bucketlists?q=travel`
+`/bucketlists?q=travel`
 
-    ![Demo](/bapi/docs_images/list_edited.png?raw=true)
+![Demo](/bapi/docs_images/list_edited.png?raw=true)
 
 You can also limit the number of search results that you receive in the response by using a limit parameter.
 
-  `/bucketlists?q=travel&limit=1`
+`/bucketlists?q=travel&limit=1`
 
-    ![Demo](/bapi/docs_images/list_searching_with_limit.png?raw=true)
+![Demo](/bapi/docs_images/list_searching_with_limit.png?raw=true)
 
 #### Deleting a bucketlist item and a bucketlist
 
-You can delete an item inside a bucketlist by having ```/bucketlists/<id>/items/<item_id>``` as your URL, and the method as DELETE.
+You can delete an item inside a bucketlist by having `/bucketlists/<id>/items/<item_id>` as your URL, and the method as DELETE.
 
-    ![Demo](/bapi/docs_images/list_item_delete.png?raw=true)
+![Demo](/bapi/docs_images/list_item_delete.png?raw=true)
 
-The same can be achieved for a bucketlist with ```/bucketlists/<id>``` as your URL and the method as DELETE.
+The same can be achieved for a bucketlist with `/bucketlists/<id>` as your URL and the method as DELETE.
 
-    ![Demo](/bapi/docs_images/list_bucketlist_delete.png?raw=true)
+![Demo](/bapi/docs_images/list_bucketlist_delete.png?raw=true)
 
 Below we see that the bucketlist is gone.
 
-    ![Demo](/bapi/docs_images/list_bucketlist_delete.png?raw=true)
+![Demo](/bapi/docs_images/list_bucketlist_delete.png?raw=true)
 
 ## Running the tests
 
 To run the tests run:
 
-  `nosetests`
+`nosetests`
 
 To see the test coverage run:
 
-  `nosetests --with-coverage`
+`nosetests --with-coverage`
 
 ## Built with
 
