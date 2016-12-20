@@ -7,10 +7,3 @@ install:
 # command to run tests
 script:
   - nosetests
-# environment variables
-# env:
-#   global:
-#     - SECRET_KEY="JdN!$Jzxor^ecdjIoEMuRw8ozD!MtB"
-#     - SQLALCHEMY_TEST_DATABASE="sqlite:///test_db.sqlite"
-#     - SQLALCHEMY_DEV_DATABASE="sqlite:///dev_db.sqlite"
-#     - SQLALCHEMY_PROD_DATABASE="sqlite:///prod_db.sqlite"
