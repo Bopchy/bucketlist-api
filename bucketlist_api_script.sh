@@ -1,9 +1,10 @@
 #!/bin/bash
-# Runs migrations for bucketlist API
-# python bapi/manage.py
 
+#Creates migration folder for bucketlist API
+python bapi/manage.py db init
 
-python index.py
+# Creates the database tables from the models
+python bapi/manage.py db migrate
 
-# Runs all the tests for bucketlist API
-nosetests
+# Upgrades the database
+python bapi/manage.py db upgrade
