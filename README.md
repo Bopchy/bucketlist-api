@@ -1,1 +1,1 @@
-# bucketlist-api
+# Bapi - A Flask RESTful bucketlist API
