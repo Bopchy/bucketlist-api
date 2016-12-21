@@ -13,7 +13,6 @@ class CreateBucketlistItem(Resource):
     @token_auth.login_required
     def post(self, id):
         try:
-
             create_item = reqparse.RequestParser()
             create_item.add_argument('name', type=str, required=True,
                                      location='json')
@@ -24,46 +23,41 @@ class CreateBucketlistItem(Resource):
             bucketlist = Bucketlist.query.\
                 filter_by(created_by=g.user.id, id=id).first()
 
-            if bucketlist:
+            if not bucketlist:
+                return {'message': 'A bucketlist with that id does not \
+                    exist.'}, 404
+            item_query = BucketListItem.query.filter_by(bucketlist_id=id).all()
+            existing_items = [item.name for item in item_query]
 
-                item_query = \
-                    BucketListItem.query.filter_by(bucketlist_id=id).all()
-                existing_items = [item.name for item in item_query]
+            if args.done.lower() in ['yes', 'no']:
+                done = args.done
+            else:
+                return {
+                    'message': "Use either 'Yes' or 'No' for done"
+                }, 400
 
-                if args.done.lower() == 'no' or args.done.lower() == 'yes':
-                    done = args.done
-                else:
-                    return {
-                        'message': "Use either 'Yes' or 'No' for done"
-                    }, 400
+            if not args.name.strip():
+                return {
+                    'message': 'Please provide a name for the new bucketlist\
+                     item.'
+                }, 400
+            elif args.name in existing_items:
+                return {'message': 'Item with that name already exists \
+                    in this bucketlist.'}, 409
+            new_bucketlist_item = BucketListItem(name=args.name,
+                                                 done=done)
+            new_bucketlist_item.bucketlist_id = bucketlist.id
+            db.session.add(new_bucketlist_item)
+            db.session.commit()
+            return {'message': "New item has been created."}, 201
 
-                if args.name == "" or args.name == " ":
-                    return {
-                        'message': 'Please provide a name for the new bucketlist\
-                         item.'
-                    }, 400
-                elif args.name in existing_items:
-                    return {'message': 'Item with that name already exists \
-                        in this bucketlist.'}, 409
-                new_bucketlist_item = BucketListItem(name=args.name,
-                                                     done=done)
-                new_bucketlist_item.bucketlist_id = bucketlist.id
-
-                try:
-                    db.session.add(new_bucketlist_item)
-                    db.session.commit()
-                    return {'message': "New item has been created."}, 201
-                except Exception:
-                    db.session.rollback()
-                    return {'message': 'An error occured during saving.'},\
-                        500
-
-            return {'message': 'A bucketlist with that id does not \
-                exist.'}, 404
-
-        except AttributeError:
-            return {'message': 'You are not authorized to access this item.'},\
-                403
+        except Exception as e:
+            if e is AttributeError:
+                return {
+                    'message': 'You are not authorized to access this item.'
+                }, 403
+            db.session.rollback()
+            return {'message': 'An error occured during saving.'}, 500
 
 
 class BucketlistItems(Resource):
@@ -72,9 +66,7 @@ class BucketlistItems(Resource):
 
     @token_auth.login_required
     def put(self, id, item_id):
-
         try:
-
             parser = reqparse.RequestParser()
             parser.add_argument('name', type=str, required=False,
                                 location='json')
@@ -84,81 +76,64 @@ class BucketlistItems(Resource):
 
             bucketlist = Bucketlist.query.filter_by(created_by=g.user.id,
                                                     id=id).first()
-            if bucketlist:
+            if not bucketlist:
+                return {
+                    'message': 'You do not have a bucketlist with that id.'
+                }, 404
 
-                bucketlist_item = BucketListItem.query.filter_by(
-                    bucketlist_id=id, id=item_id).first()
-
-                if bucketlist_item:
-                    item_query = BucketListItem.query.\
-                        filter_by(bucketlist_id=id).all()
-                    existing_items = [item.name for item in item_query]
-
-                    if args.done is None:
-                        args.done = bucketlist_item.done
-                    elif args.done.lower() == 'no' or args.done.lower() == 'yes':
-                        bucketlist_item.done = args.done
-                    else:
-                        return {
-                            'message': "Use either 'Yes' or 'No' for done"
-                        }, 400
-
-                    if args.name is None:
-                        args.name = bucketlist_item.name
-                    elif args.name in existing_items:
-                        return {
-                            'message': 'Item with that name already exists in this bucketlist.'
-                        }, 409
-                    elif args.name is "" or args.name is " ":
-                        return {
-                            'message': 'You cannot have a nameless bucketlist item'
-                        }, 400
-
-                    bucketlist_item.name = args.name
-
-                    try:
-                        db.session.commit()
-                        return {
-                            'message': 'Changes have been made succesfully.'
-                        }, 200
-                    except Exception:
-                        db.session.rollback()
-                        return {
-                            'message': 'An error occured during saving.'
-                        }, 500
-
+            bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=id,
+                                                             id=item_id).first()
+            if not bucketlist_item:
                 return {'message': 'An item with that id was not found.'}, 404
+            item_query = BucketListItem.query.filter_by(bucketlist_id=id).all()
+            existing_items = [item.name for item in item_query]
 
-            return {
-                'message': 'You do not have a bucketlist with that id.'
-            }, 404
+            if args.done is None:
+                args.done = bucketlist_item.done
+            elif args.done.lower() in ['no', 'yes']:
+                bucketlist_item.done = args.done
+            else:
+                return {'message': "Use either 'Yes' or 'No' for done"}, 400
 
-        except AttributeError:
-            return {
-                'message': 'You are not authorized to access this item.'
-            }, 403
+            if args.name is None:
+                args.name = bucketlist_item.name
+            elif args.name in existing_items:
+                return {
+                    'message': 'Item with that name already exists in this bucketlist.'
+                }, 409
+            elif not args.name.strip():
+                return {
+                    'message': 'You cannot have a nameless bucketlist item'
+                }, 400
+            bucketlist_item.name = args.name
+            db.session.commit()
+            return {'message': 'Changes have been made succesfully.'}, 200
+
+        except Exception as e:
+            if e is AttributeError:
+                return {
+                    'message': 'You are not authorized to access this item.'
+                }, 403
+            db.session.rollback()
+            return {'message': 'An error occured during saving.'}, 500
 
     @token_auth.login_required
     def delete(self, id, item_id):
         try:
-
             bucketlist = \
                 Bucketlist.query.filter_by(id=id, created_by=g.user.id).first()
-            if bucketlist:
+            if not bucketlist:
+                return {
+                    'message': "You are not authorized to delete this item"
+                }, 401
+            BucketListItem.query.filter_by(id=item_id).delete()
+            db.session.commit()
+            return {'message': 'Item has been deleted successfully.'}, 200
 
-                try:
-                    BucketListItem.query.filter_by(id=item_id).delete()
-                    db.session.commit()
-                    return {'message': 'Item has been deleted successfully.'},\
-                        200
-                except Exception:
-                    db.session.rollback()
-                    return {'message': 'An error occured during saving.'},\
-                        200
-
-            return {'message': "You are not authorized to delete this item"},\
-                401
-
-        except AttributeError:
-            return {'message': 'You are not authorized to access this item.'},\
-                403
+        except Exception as e:
+            if e is AttributeError:
+                return {
+                    'message': 'You are not authorized to access this item.'
+                }, 403
+            db.session.rollback()
+            return {'message': 'An error occured during saving.'}, 500
