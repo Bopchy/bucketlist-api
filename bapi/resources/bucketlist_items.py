@@ -24,8 +24,6 @@ class CreateBucketlistItem(Resource):
             bucketlist = Bucketlist.query.\
                 filter_by(created_by=g.user.id, id=id).first()
 
-            # import ipdb; ipdb.set_trace()
-
             if bucketlist:
 
                 item_query = \
@@ -50,16 +48,15 @@ class CreateBucketlistItem(Resource):
                 new_bucketlist_item = BucketListItem(name=args.name,
                                                      done=done)
                 new_bucketlist_item.bucketlist_id = bucketlist.id
-                # import ipdb; ipdb.set_trace()
+
                 try:
                     db.session.add(new_bucketlist_item)
                     db.session.commit()
                     return {'message': "New item has been created."}, 201
-                except Exception as e:
+                except Exception:
                     db.session.rollback()
-                    # return {'message': 'An error occured during saving.'},\
-                        # 500
-                    return {'message': e}
+                    return {'message': 'An error occured during saving.'},\
+                        500
 
             return {'message': 'A bucketlist with that id does not \
                 exist.'}, 404
@@ -75,7 +72,7 @@ class BucketlistItems(Resource):
 
     @token_auth.login_required
     def put(self, id, item_id):
-        # import ipdb; ipdb.set_trace()
+
         try:
 
             parser = reqparse.RequestParser()
