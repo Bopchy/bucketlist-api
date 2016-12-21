@@ -18,62 +18,54 @@ class Bucketlists(Resource):
     @token_auth.login_required
     def get(self):
         try:
-
             q = request.args.get('q', '')
-
-            try:
-                limit = int(request.args.get('limit', '20'))
-            except Exception:
-                return {'message': 'Invalid limit value provided.'}
-
-            try:
-                page = int(request.args.get('page', '1'))
-            except Exception:
-                return {'message': 'Invalid page value provided.'}
+            limit = int(request.args.get('limit', '20'))
+            page = int(request.args.get('page', '1'))
 
             all_bucketlists = Bucketlist.query.filter(
                 Bucketlist.created_by == g.user.id, Bucketlist.name.ilike(
                     '%' + q + '%')).paginate(page, limit, True)
 
-            if all_bucketlists:
+            if not all_bucketlists:
+                return {'message': 'There are currently no existing bucketlists.\
+                    '}, 200
+            all_pages = all_bucketlists.pages
+            next_page = all_bucketlists.has_next
+            prev_page = all_bucketlists.has_prev
+            url = urlparse(request.url)
+            root_url = url.scheme + '://' + url.netloc + url.path
 
-                all_pages = all_bucketlists.pages
-                next_page = all_bucketlists.has_next
-                prev_page = all_bucketlists.has_prev
-                url = urlparse(request.url)
-                root_url = url.scheme + '://' + url.netloc + url.path
+            if next_page:
+                next_page = root_url + 'limit=' + str(limit) + '&page=' + \
+                    str(page + 1)
+            else:
+                next_page = None
 
-                if next_page:
-                    next_page = root_url + 'limit=' + str(limit) + '&page=' + \
-                        str(page + 1)
-                else:
-                    next_page = None
+            if prev_page:
+                prev_page = root_url + 'limit=' + str(limit) + '&page=' + \
+                    str(page - 1)
+            else:
+                prev_page = None
 
-                if prev_page:
-                    prev_page = root_url + 'limit=' + str(limit) + '&page=' + \
-                        str(page - 1)
-                else:
-                    prev_page = None
+            all_bucketlists = all_bucketlists.items
 
-                all_bucketlists = all_bucketlists.items
+            return {'bucketlists': marshal(all_bucketlists,
+                                           bucketlist_serial),
+                    'total_pages': all_pages,
+                    'next_page': next_page,
+                    'prev_page': prev_page}
 
-                return {'bucketlists': marshal(all_bucketlists,
-                                               bucketlist_serial),
-                        'total_pages': all_pages,
-                        'next_page': next_page,
-                        'prev_page': prev_page}
-
-            return {'message': 'There are currently no existing bucketlists.\
-                '}, 200
-
-        except AttributeError:
-            return {'message': 'You are not authorized to access this item.'},\
-                403
+        except Exception as e:
+            if e is AttributeError:
+                return {
+                    'message': 'You are not authorized to access this item.'
+                }, 403
+            # return {'message': 'Invalid value provided.'}
+            return e
 
     @token_auth.login_required
     def post(self):
         try:
-
             existing = [item.name for item in Bucketlist.query.all()]
 
             self.bucketlist = reqparse.RequestParser()
@@ -81,7 +73,7 @@ class Bucketlists(Resource):
                                          location='json')
             self.args = self.bucketlist.parse_args()
 
-            if self.args.name is " ":
+            if not self.args.name.strip():
                 return {'message': 'Provide a name for the new bucketlist.'}, \
                     400
             elif self.args.name in existing:
@@ -91,18 +83,17 @@ class Bucketlists(Resource):
 
             new_bucketlist = Bucketlist(name=self.args.name,
                                         created_by=g.user.id)
+            db.session.add(new_bucketlist)
+            db.session.commit()
+            return {'message': 'New Bucketlist created successfully.'}, 201
 
-            try:
-                db.session.add(new_bucketlist)
-                db.session.commit()
-                return {'message': 'New Bucketlist created successfully.'}, 201
-            except Exception:
-                db.session.rollback()
-                return {'message': 'An error occured during saving.'}, 500
-
-        except AttributeError:
-            return {'message': 'You are not authorized to access this item.'},\
-                403
+        except Exception as e:
+            if e is AttributeError:
+                return {
+                    'message': 'You are not authorized to access this item.'
+                }, 403
+            db.session.rollback()
+            return {'message': 'An error occured during saving.'}, 500
 
 
 class SingleBucketlist(Resource):
@@ -112,7 +103,6 @@ class SingleBucketlist(Resource):
     @token_auth.login_required
     def get(self, id):
         try:
-
             requested_bucketlist = \
                 Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
 
@@ -128,7 +118,6 @@ class SingleBucketlist(Resource):
     @token_auth.login_required
     def put(self, id):
         try:
-
             existing = [item.name for item in Bucketlist.query.all()]
 
             self.new = reqparse.RequestParser()
@@ -136,58 +125,48 @@ class SingleBucketlist(Resource):
                                   location='json')
             self.args = self.new.parse_args()
 
-            if self.args:
-                bucketlist = Bucketlist.query.filter_by(created_by=g.user.id,
-                                                        id=id).first()
+            if not self.args:
+                return {
+                    'message': 'Provide a new name to edit this Bucketlist.'
+                }, 400
+            bucketlist = Bucketlist.query.filter_by(created_by=g.user.id,
+                                                    id=id).first()
 
-                if bucketlist:
-
-                    if self.args.name in existing:
-                        return {
-                            'message': 'You already have a Bucketlist with that name.'
-                        }, 409
-
-                    try:
-                        bucketlist.name = self.args.name
-                        db.session.commit()
-                        return {'message': 'Bucketlist edited successfully.'},\
-                            200
-                    except Exception:
-                        db.session.rollback()
-                        return {'message': 'An error occured during saving.'},\
-                            500
-
+            if not bucketlist:
                 return {
                     'message': 'A bucketlist with that id was not found.'
                 }, 404
+            if self.args.name in existing:
+                return {
+                    'message': 'You already have a Bucketlist with that name.'
+                }, 409
+            bucketlist.name = self.args.name
+            db.session.commit()
+            return {'message': 'Bucketlist edited successfully.'},\
+                200
 
-            return {'message': 'Provide a new name to edit this Bucketlist.'},\
-                400
-
-        except AttributeError:
-            return {'message': 'You are not authorized to access this item.'},\
-                403
+        except Exception as e:
+            if e is AttributeError:
+                return {
+                    'message': 'You are not authorized to access this item.'
+                }, 403
+            db.session.rollback()
+            return {'message': 'An error occured during saving.'},\
+                500
 
     @token_auth.login_required
     def delete(self, id):
         try:
+            Bucketlist.query.filter_by(created_by=g.user.id,
+                                       id=id).delete()
+            BucketListItem.query.filter_by(bucketlist_id=id).delete()
+            db.session.commit()
+            return {'message': 'Bucketlist deleted successfully.'}, 200
 
-            if id:
-
-                try:
-                    Bucketlist.query.filter_by(created_by=g.user.id,
-                                               id=id).delete()
-                    BucketListItem.query.filter_by(bucketlist_id=id).delete()
-                    db.session.commit()
-                    return {'message': 'Bucketlist deleted successfully.'}, 200
-                except Exception:
-                    db.session.rollback()
-                    return {'message': 'An error occured during saving.'}, 500
-
-            return {
-                'message': 'You must provide a bucketlist id to delete a Bucketlist.'
-            }, 204
-
-        except AttributeError:
-            return {'message': 'You are not authorized to access this item.'},\
-                403
+        except Exception as e:
+            if e is AttributeError:
+                return {
+                    'message': 'You are not authorized to access this item.'
+                }, 403
+            db.session.rollback()
+            return {'message': 'An error occured during saving.'}, 500
