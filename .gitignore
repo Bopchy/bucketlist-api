@@ -6,3 +6,5 @@ tox.ini
 .tox/
 MANIFEST
 /migrations/
+/node_modules/
+/public/
