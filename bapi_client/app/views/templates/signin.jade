@@ -11,3 +11,5 @@ script(type="text/x-template" id="signin")
                     input.form-control(type="password" placeholder="Your password" v-model="password")
                 
                 button(type="submit" v-on:click.prevent.stop="loginUser").btn.btn-default Login
+                
+            router-link(to="sign-up") Not yet a user? Click here to sign up.

@@ -2,6 +2,8 @@
 import home from './components/home';
 import signUp from './components/signUp';
 import signIn from './components/signIn';
+import addBucketlist from './components/addBucketlist';
+
 import authorizer from './mixins/authorizer';
 
 // Equivalent of 'DEBUG = True' in Flask
@@ -14,16 +16,16 @@ const appRoutes = [{
   component: home,
 }, {
   path: '/sign-up',
-  name: 'sign-up',
+  name: 'signUp',
   component: signUp,
 }, {
   path: '/sign-in',
-  name: 'sign-in',
+  name: 'signIn',
   component: signIn,
 }, {
-  path: '/bucketlists/',
-  name: 'bucketlists',
-  component: bucketlists,
+  path: '/bucketlist/create',
+  name: 'addBucketlist',
+  component: addBucketlist,
 }, {
   // Directs to home if path is invalid
   path: '/*',

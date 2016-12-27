@@ -15,5 +15,8 @@ script(type="text/x-template" id="sign-up")
                     input.form-control(type="password" placeholder="Your password" v-model="password")
                 
                 button(type="submit" v-on:click.prevent.stop="registerUser").btn.btn-default Submit
+                // 'click.prevent.stop' stops click events from bubbling up to the browser, so 
+                // that you can handle the page navgation manually -- normally, a click event will
+                // trigger the browser to switch to another page specified in the form class.  
                 
             router-link(to="sign-in") Already a user? Click her to sign in.

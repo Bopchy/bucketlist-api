@@ -1,2 +1,6 @@
 script(type="text/x-template" id="bucketlists")
-    
+    form
+        .form-group
+            label(for="name") 
+            input.form-control(type="text" placeholder="Your new bucketlist" v-model="name")
+        button(type="submit" v-on:click.prevent.stop="addBucketlist").btn.btn-default Add Bucketlist
