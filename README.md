@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Bopchy/bucketlist-api.svg?branch=develop)](https://travis-ci.org/Bopchy/bucketlist-api)
+[![Coverage Status](https://coveralls.io/repos/github/Bopchy/bucketlist-api/badge.svg?branch=develop)](https://coveralls.io/github/Bopchy/bucketlist-api?branch=develop)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
