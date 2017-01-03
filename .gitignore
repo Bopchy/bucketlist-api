@@ -1,0 +1,8 @@
+.DS_Store
+*.pyc
+.coverage
+*.sqlite
+tox.ini
+.tox/
+MANIFEST
+/migrations/

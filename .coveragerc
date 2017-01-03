@@ -1,0 +1,6 @@
+[run]
+source =
+    bapi/
+omit =
+    */tests/*
+    */python3.5/*
