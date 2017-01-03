@@ -18,11 +18,12 @@ class Login(Resource):
         user = Users.query.filter_by(username=self.args.username).first()
 
         try:
-            if user:
-                if user.check_password(self.args.password):
-                    token = user.generate_auth_token()
-                    return {'token': token}, 200
+            if not user:
+                return {'message': 'That username does not exist.'}, 401
+            if not user.check_password(self.args.password):
                 return {'message': 'Invalid password'}, 401
-            return {'message': 'That username does not exist.'}, 401
+            token = user.generate_auth_token()
+            return {'token': token}, 200
+
         except Exception:
             return {'message': 'There was an error logging you in.'}, 400

@@ -49,8 +49,7 @@ class Bucketlists(Resource):
 
             all_bucketlists = all_bucketlists.items
 
-            return {'bucketlists': marshal(all_bucketlists,
-                                           bucketlist_serial),
+            return {'bucketlists': marshal(all_bucketlists, bucketlist_serial),
                     'total_pages': all_pages,
                     'next_page': next_page,
                     'prev_page': prev_page}
@@ -60,8 +59,7 @@ class Bucketlists(Resource):
                 return {
                     'message': 'You are not authorized to access this item.'
                 }, 403
-            # return {'message': 'Invalid value provided.'}
-            return e
+            return {'message': 'Invalid value provided.'}
 
     @token_auth.login_required
     def post(self):
@@ -106,14 +104,16 @@ class SingleBucketlist(Resource):
             requested_bucketlist = \
                 Bucketlist.query.filter_by(created_by=g.user.id, id=id).first()
 
-            if requested_bucketlist:
-                return marshal(requested_bucketlist, bucketlist_serial)
-            return {'message': 'You do not have a bucketlist with that id.'}, \
-                404
+            if not requested_bucketlist:
+                return {
+                    'message': 'You do not have a bucketlist with that id.'
+                    }, 404
+            return marshal(requested_bucketlist, bucketlist_serial)
 
         except AttributeError:
-            return {'message': 'You are not authorized to access this item.'},\
-                403
+            return {
+                'message': 'You are not authorized to access this item.'
+                }, 403
 
     @token_auth.login_required
     def put(self, id):
@@ -142,8 +142,7 @@ class SingleBucketlist(Resource):
                 }, 409
             bucketlist.name = self.args.name
             db.session.commit()
-            return {'message': 'Bucketlist edited successfully.'},\
-                200
+            return {'message': 'Bucketlist edited successfully.'}, 200
 
         except Exception as e:
             if e is AttributeError:
@@ -151,8 +150,7 @@ class SingleBucketlist(Resource):
                     'message': 'You are not authorized to access this item.'
                 }, 403
             db.session.rollback()
-            return {'message': 'An error occured during saving.'},\
-                500
+            return {'message': 'An error occured during saving.'}, 500
 
     @token_auth.login_required
     def delete(self, id):
