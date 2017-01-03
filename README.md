@@ -1,8 +1,7 @@
 [![Build Status](https://travis-ci.org/Bopchy/bucketlist-api.svg?branch=develop)](https://travis-ci.org/Bopchy/bucketlist-api)
-
-[![GitHub Release](https://img.shields.io/github/Bopchy/bucketlist-api/tree/develop/rubidium.svg)](https://github.com/Bopchy/bucketlist-api/tree/develop)
+[![GitHub Release](https://img.shields.io/github/release/Bopchy/bucketlist-api.svg?branch=develop)](https://github.com/Bopchy/bucketlist-api/tree/develop)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
+[![Coverage Status](https://coveralls.io/repos/github/Bopchy/bucketlist-api/badge.svg?branch=master)](https://coveralls.io/github/Bopchy/bucketlist-api?branch=master)
 
 # Bapi - A Flask RESTful bucketlist API
 
