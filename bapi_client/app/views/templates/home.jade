@@ -1,4 +1,9 @@
 script(type="text/x-template" id="home")
     .homepage
-        h2 {{ message }}
-        p(v-on:click="changeMessage") Update message
+        ol
+            li(v-for="bucket in buckets")
+                h5 {{ bucket.name }}
+                ol
+                    li(v-for="item in bucket.item")
+                        p {{ item.name }}
+        button(type="")

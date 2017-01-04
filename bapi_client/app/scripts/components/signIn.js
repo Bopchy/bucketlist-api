@@ -30,7 +30,7 @@ const signIn = {
             // https://developer.mozilla.org/en/docs/Web/API/Navigator
             window.localStorage.setItem('bapiToken', JSON.stringify(response.data));
             this.$router.push({
-              name: 'bucketlists',
+              name: 'home',
             });
           });
       } else {

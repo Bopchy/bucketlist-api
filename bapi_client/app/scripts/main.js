@@ -3,6 +3,7 @@ import home from './components/home';
 import signUp from './components/signUp';
 import signIn from './components/signIn';
 import addBucketlist from './components/addBucketlist';
+import addBucketlistItem from './components/addBucketlistItem';
 
 import authorizer from './mixins/authorizer';
 
@@ -26,6 +27,10 @@ const appRoutes = [{
   path: '/bucketlist/create',
   name: 'addBucketlist',
   component: addBucketlist,
+}, {
+  path: '/bucketlist/addItem',
+  name: 'addBucketlistItem',
+  component: addBucketlistItem,
 }, {
   // Directs to home if path is invalid
   path: '/*',

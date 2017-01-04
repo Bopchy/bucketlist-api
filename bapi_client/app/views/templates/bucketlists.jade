@@ -4,3 +4,11 @@ script(type="text/x-template" id="bucketlists")
             label(for="name") 
             input.form-control(type="text" placeholder="Your new bucketlist" v-model="name")
         button(type="submit" v-on:click.prevent.stop="addBucketlist").btn.btn-default Add Bucketlist
+
+
+
+    .buckets-content
+        .bucket(v-for="b in buckets")
+            h5 {{ b.name }}
+            p {{ b.description }}
+            button(types="submit" v-on:click.prevent.stop="addBucketlist(b.id)")
