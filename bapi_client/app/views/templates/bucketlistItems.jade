@@ -3,11 +3,11 @@ script(type="text/x-template" id="bucketlistItems")
         .form-group
             label(for="name") 
             input.form-control(type="text" placeholder="Your new bucketlist item" v-model="name")
-        .radio-inline
-            label(for="done")
-            //- input.checkbox(type="checkbox" name="done_checkbox" v-model="done") 
-                input(type="radio" name="doneOptions" id="yesDone" value="yes")
-        .radio-inline
-            label(for="done") 
-                input(type="radio" name="doneOptions" id="noDone" value="no" checked)   
-        button(type="submit" v-on:click.prevent.stop="addBucketlistItem").btn.btn-default Create new item
+            .radio-inline
+                label(for="done") Yes
+                input(type="radio" name="doneOptions" id="yesDone" value="yes") 
+            .radio-inline
+                label(for="done") No
+                input(type="radio" name="doneOptions" id="noDone" value="no" checked) 
+            router-link(v-bind:to="{ name: 'home' }")  
+                button(type="submit" v-on:click.prevent.stop="addBucketlistItem").btn.btn-default Create new item

@@ -10,11 +10,14 @@ const addBucketlistItem = {
       responseMessage: 'You cannot have a nameless item.'
     };
   },
+  created() {
+    console.log(this.$route.params.bucketlistId);
+  },
   methods: {
-    addBucketlistItem(id) {
-      console.log(id)
+    addBucketlistItem() {
+      const id = this.$route.params.bucketlistId;
       if(this.name){
-        axios.post('http://localhost:5000/bucketlists/'+ id +'/items', {
+        axios.post('http://localhost:5000/bucketlists/'+ id +'/items/', {
           name: this.name,
           done: this.done,
         })

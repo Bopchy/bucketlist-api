@@ -20,6 +20,9 @@ const addBucketlist = {
           this.formFilled = true;
           this.responseMessage = response.data.message;
           this.name = undefined;
+          this.$router.push({
+            name: 'home',
+          })
         })
       }
     },

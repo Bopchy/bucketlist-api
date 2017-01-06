@@ -1,0 +1,13 @@
+script(type="text/x-template" id="editBucketlistItem")
+    form
+        .form-group
+            label(for="name")
+            input.form-group(type="text" placeholder="" v-model="name")
+            .radio-inline
+                label(for="done") Yes
+                input(type="radio" name="doneOptions" id="yesDone" value="yes" v-model="doneYes")
+            .radio-inline
+                label(for="done") No
+                input(type="radio" name="doneOptions" id="noDone" value="no" v-model="doneNo")  
+            router-link(:to="{ name: 'home' }")
+                button(type="submit" v-on:click.stop.prevent='editBucketlistItem').btn.btn-default Save changes

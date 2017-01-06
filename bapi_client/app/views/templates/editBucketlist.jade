@@ -1,0 +1,7 @@
+script(type="text/x-template" id="editBucketlist")
+    form
+        .form-group
+            label(for="name")
+            input.form-control(type="text" placeholder="Your new bucketlist name" v-model="name")
+            router-link(v-bind:to="{ name: 'home' }")
+                button(type="submit" v-on:click.prevent.stop="editBucketlist").btn.btn-default Save my changes
