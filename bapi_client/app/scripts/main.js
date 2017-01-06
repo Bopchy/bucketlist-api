@@ -7,6 +7,7 @@ import addBucketlistItem from './components/addBucketlistItem';
 import editBucketlist from './components/editBucketlist';
 import editBucketlistItem from './components/editBucketlistItem';
 import deleteBucketlist from './components/deleteBucketlist';
+import deleteBucketlistItem from './components/deleteBucketlistItem';
 
 import authorizer from './mixins/authorizer';
 
@@ -46,6 +47,10 @@ const appRoutes = [{
   path: '/bucketlists/:bucketlistId',
   name: 'deleteBucketlist',
   component: deleteBucketlist,
+}, {
+  path: '/bucketlists/:bucketlistId/items/:itemId',
+  name: 'deleteBucketlistItem',
+  component: deleteBucketlistItem,
 }, {
   // Directs to home if path is invalid
   path: '/*',

@@ -23,7 +23,7 @@ const authorizer = {
       // http://router.vuejs.org/en/advanced/navigation-guards.html
     console.log('Not logged in. Taking them to sign in page');
     this.$router.push({
-      name: 'sign-in',
+      name: 'signIn',
     });
   },
 };

@@ -8,27 +8,11 @@ script(type="text/x-template" id="home")
             li(v-for="bucket in buckets")
                 h5 {{ bucket.name }} 
                 router-link(v-bind:to="{ name: 'editBucketlist', params: { bucketlistId: bucket.id } }") Edit
-                //- a(href="/bucketlists/:bucketlistId" v-on:click.prevent.stop="deleteBucketlist") Delete
-                // Use a(href) with a click event to achieve a customization of this link -- which will give you the instant 
-                // reactivity
-                button(id="show-modal" @click="showModal = true") Delete  
-                modal(v-if="showModal" @close="showModal = false")
+                router-link(v-bind:to="{ name: 'deleteBucketlist', params: { bucketlistId: bucket.id } }") Delete
                 ol
                     li(v-for="item in bucket.item")
                         p {{ item.name }}
                         router-link(v-bind:to="{ name: 'editBucketlistItem', params: { bucketlistId: bucket.id, itemid: item.id } }") Edit 
+                        router-link(v-bind:to="{ name: 'deleteBucketlistItem', params: { bucketlistId: bucket.id, itemId: item.id } }") Delete Item
                 router-link(v-bind:to="{ name: 'addBucketlistItem', params: { bucketlistId: bucket.id } }") 
                     button(type="button").btn.btn-default Add a new item
-
-//- <!-- app -->
-//- <div id="app">
-//-   <button id="show-modal" @click="showModal = true">Show Modal</button>
-//-   <!-- use the modal component, pass in the prop -->
-//-   <modal v-if="showModal" @close="showModal = false">
-//-     <!--
-//-       you can use custom content here to overwrite
-//-       default content
-//-     -->
-//-     <h3 slot="header">custom header</h3>
-//-   </modal>
-//- </div>
