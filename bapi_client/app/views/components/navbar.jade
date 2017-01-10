@@ -1,0 +1,10 @@
+script(type="x-template" id="myNavbar")
+    .navbar.navbar-default.navbar-fixed-top
+        .container
+                ul(class="nav navbar-nav navbar-right")
+                    router-link(v-bind:to="{ name: 'signOut' }") 
+                        button(type="submit" v-on:click.stop.prevent="signOut") Sign Out
+                    router-link(v-bind:to="{ name: 'signIn' }") 
+                        button(type="submit" v-on:click.stop.prevent="signIn") Sign In
+                    router-link(v-bind:to="{ name: 'signUp' }") 
+                        button(type="submit" v-on:click.stop.prevent="signUp") Sign Up  

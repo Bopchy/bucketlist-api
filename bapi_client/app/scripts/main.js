@@ -8,6 +8,8 @@ import editBucketlist from './components/editBucketlist';
 import editBucketlistItem from './components/editBucketlistItem';
 import deleteBucketlist from './components/deleteBucketlist';
 import deleteBucketlistItem from './components/deleteBucketlistItem';
+import signOut from './components/signOut';
+import navbarComponent from './webComponent/navbar';
 
 import authorizer from './mixins/authorizer';
 
@@ -20,11 +22,11 @@ const appRoutes = [{
   name: 'home',
   component: home,
 }, {
-  path: '/sign-up',
+  path: '/signUp',
   name: 'signUp',
   component: signUp,
 }, {
-  path: '/sign-in',
+  path: '/signIn',
   name: 'signIn',
   component: signIn,
 }, {
@@ -52,6 +54,10 @@ const appRoutes = [{
   name: 'deleteBucketlistItem',
   component: deleteBucketlistItem,
 }, {
+  path: '/signOut',
+  name: 'signOut',
+  component: signOut,
+}, {
   // Directs to home if path is invalid
   path: '/*',
   redirect: '/',
@@ -59,6 +65,8 @@ const appRoutes = [{
 
 // Lets you call the mixin authorizer only once
 Vue.mixin(authorizer);
+
+Vue.component('bopchy-navbar', navbarComponent);
 
 const app = new Vue({
   router: new VueRouter({ routes: appRoutes }),

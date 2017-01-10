@@ -4,7 +4,6 @@ const deleteBucketlist = {
   template: '#deleteBucketlist',
   data() {
     return {
-      // showModal: false,
       responseMessage: undefined,
     };
   },

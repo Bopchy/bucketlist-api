@@ -27,7 +27,7 @@ const signUp = {
             this.email = this.username = this.password = undefined;
             setTimeout(() => {
               this.$router.push({
-                name: 'sign-in',
+                name: 'signIn',
               });
             }, 2000);
           })

@@ -1,5 +1,6 @@
 script(type="text/x-template" id="signin")
     .col-xs-10.col-xs-offset-1.col-md-6.col-md-offset-3
+        bopchy-navbar
         .jumbotron
             .alert(v-bind:class="{'alert-danger': !formFilled, 'alert-success': formFilled }") {{ responseMessage }}
             form
@@ -12,4 +13,4 @@ script(type="text/x-template" id="signin")
                 
                 button(type="submit" v-on:click.prevent.stop="loginUser").btn.btn-default Login
                 
-            router-link(to="sign-up") Not yet a user? Click here to sign up.
+            router-link(to="signUp") Not yet a user? Click here to sign up.
