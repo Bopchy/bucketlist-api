@@ -7,6 +7,7 @@ const signIn = {
       username: undefined,
       password: undefined,
       formFilled: false,
+      currentRoute: undefined,
       responseMessage: 'Please ensure you fill all the input.',
     };
   },
@@ -29,6 +30,7 @@ const signIn = {
             // https://developer.mozilla.org/en/docs/Web/API/Document
             // https://developer.mozilla.org/en/docs/Web/API/Navigator
             window.localStorage.setItem('bapiToken', JSON.stringify(response.data));
+            this.currentRoute =
             this.$router.push({
               name: 'home',
             });

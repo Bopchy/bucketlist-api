@@ -3,6 +3,7 @@ const signOut = {
   data() {
     return {
       responseMessage: undefined,
+      currentRoute: undefined,
     };
   },
   created() {

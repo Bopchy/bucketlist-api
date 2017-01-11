@@ -1,5 +1,15 @@
 const navbarComponent = {
   template: '#myNavbar',
+  data() {
+    return {
+      currentRoute: undefined,
+      isLoggedIn: window.localStorage.getItem('bapiToken') ? true: false, //ternary expression
+    };
+  },
+  mounted() {
+    this.currentRoute = this.$route.name;
+    console.log('Your current route', this.$route);
+  },
   methods: {
     signOut() {
       console.log(this.$route)
