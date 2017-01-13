@@ -1,4 +1,5 @@
 // Imports required components
+import landingPage from './components/landingPage'
 import home from './components/home';
 import signUp from './components/signUp';
 import signIn from './components/signIn';
@@ -9,7 +10,9 @@ import editBucketlistItem from './components/editBucketlistItem';
 import deleteBucketlist from './components/deleteBucketlist';
 import deleteBucketlistItem from './components/deleteBucketlistItem';
 import signOut from './components/signOut';
+
 import navbarComponent from './webComponent/navbar';
+import footerComponent from './webComponent/footer';
 
 import authorizer from './mixins/authorizer';
 
@@ -19,6 +22,10 @@ Vue.config.debug = true;
 // Define all the application routes
 const appRoutes = [{
   path: '/',
+  name: 'landingPage',
+  component: landingPage,
+}, {
+  path: '/home',
   name: 'home',
   component: home,
 }, {
@@ -66,7 +73,8 @@ const appRoutes = [{
 // Lets you call the mixin authorizer only once
 Vue.mixin(authorizer);
 
-Vue.component('bopchy-navbar', navbarComponent);
+Vue.component('bapi-navbar', navbarComponent);
+Vue.component('bapi-footer', footerComponent);
 
 const app = new Vue({
   router: new VueRouter({ routes: appRoutes }),

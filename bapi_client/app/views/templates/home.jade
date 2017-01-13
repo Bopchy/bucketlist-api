@@ -1,24 +1,36 @@
 script(type="text/x-template" id="home")
     .homepage
-        bopchy-navbar
+        bapi-navbar
         
         br
         br
         br
-        
-        h5 {{ message }}
-        p
-            router-link(v-bind:to="{ name: 'addBucketlist'}")
-                button(type="button").btn.btn-default Create a new Bucketlist
-        ol
-            li(v-for="bucket in buckets")
-                h5 {{ bucket.name }} 
-                router-link(v-bind:to="{ name: 'editBucketlist', params: { bucketlistId: bucket.id } }") Edit
-                router-link(v-bind:to="{ name: 'deleteBucketlist', params: { bucketlistId: bucket.id } }") Delete
-                ol
-                    li(v-for="item in bucket.item")
-                        p {{ item.name }}
-                        router-link(v-bind:to="{ name: 'editBucketlistItem', params: { bucketlistId: bucket.id, itemid: item.id } }") Edit 
-                        router-link(v-bind:to="{ name: 'deleteBucketlistItem', params: { bucketlistId: bucket.id, itemId: item.id } }") Delete Item
-                router-link(v-bind:to="{ name: 'addBucketlistItem', params: { bucketlistId: bucket.id } }") 
-                    button(type="button").btn.btn-default Add a new item
+        .panel
+            .jumbotron
+                h1 {{ message }}
+                p
+                    router-link(v-bind:to="{ name: 'addBucketlist'}")
+                        button(type="button").btn.btn-default Create a new Bucketlist
+            ol
+                .card-block
+                    li(v-for="bucket in buckets")
+                        h5 {{ bucket.name }} &nbsp;&nbsp;&nbsp; Date created: {{ bucket.date_created }} &nbsp;&nbsp;&nbsp; Date modified: {{ bucket.date_created }} 
+                        router-link(v-bind:to="{ name: 'editBucketlist', params: { bucketlistId: bucket.id } }") Edit
+                        router-link(v-bind:to="{ name: 'deleteBucketlist', params: { bucketlistId: bucket.id } }") Delete
+                        ol
+                            li(v-for="item in bucket.item")
+                                p {{ item.name }} 
+                                router-link(v-bind:to="{ name: 'editBucketlistItem', params: { bucketlistId: bucket.id, itemid: item.id } }") Edit 
+                                router-link(v-bind:to="{ name: 'deleteBucketlistItem', params: { bucketlistId: bucket.id, itemId: item.id } }") Delete Item
+                                p Date created: {{ item.date_created }} &nbsp;&nbsp;&nbsp; Date modified: {{ item.date_created }} 
+                        router-link(v-bind:to="{ name: 'addBucketlistItem', params: { bucketlistId: bucket.id } }") 
+                            button(type="button").btn.btn-default Add a new item
+                    
+        bapi-footer 
+                
+
+        //- <div class="card card-primary text-xs-center z-depth-2">
+        //-        <div class="card-block">
+        //-            <p class="white-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+        //-        </div>
+        //-    </div>

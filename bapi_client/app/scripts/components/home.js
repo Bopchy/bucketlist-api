@@ -4,7 +4,7 @@ const home = {
   template: '#home',
   data() {
     return {
-      message: 'You are at home now',
+      message: 'Your bucketlists',
       buckets: []
     };
   },
@@ -14,7 +14,13 @@ const home = {
     axios.get('http://localhost:5000/bucketlists/')
       .then((response) => {
         console.log(response);
-        this.buckets = response.data.bucketlists;
+        // Data structures come with built in functions
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+        this.buckets = response.data.bucketlists.map((bucket) => {
+          // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+          bucket.date_created = bucket.date_created.replace('-0000', '');
+          return bucket;
+        });
       }).catch((err) => {
         console.error(err);
       })
